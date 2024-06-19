@@ -1,0 +1,65 @@
+/* 水平间距 */
+/* 水平间距 */
+.datetime-picker.data-v-a98699ac {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.datetime-picker__inputs.data-v-a98699ac {
+  display: flex;
+  width: 100%;
+}
+.datetime-picker__input.data-v-a98699ac {
+  flex: 1;
+  height: 35px;
+  line-height: 35px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+}
+.datetime-picker__separator.data-v-a98699ac {
+  flex-shrink: 0;
+  margin: 0 5px;
+  line-height: 35px;
+}
+.datetime-picker__content.data-v-a98699ac {
+  background: #fff;
+  height: 400rpx;
+  width: 100%;
+}
+.datetime-picker__header.data-v-a98699ac {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  height: 80rpx;
+  border-bottom: 1px solid #ddd;
+}
+.datetime-picker__cancel.data-v-a98699ac, .datetime-picker__complete.data-v-a98699ac {
+  color: #0055ff;
+  border: none;
+  background: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+.datetime-picker__tip.data-v-a98699ac {
+  color: #939393;
+}
+.datetime-picker__pickers.data-v-a98699ac {
+  display: flex;
+  justify-content: space-between;
+}
+.datetime-picker .picker-view.data-v-a98699ac {
+  width: 48%;
+  height: 500rpx;
+}
+.datetime-picker__item.data-v-a98699ac {
+  line-height: 100rpx;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
