@@ -82,6 +82,8 @@
 	import {
 		formatSubject
 	} from '../../utils/utils'
+	
+	import { request } from '../../utils/request'
 
 	const calRef = ref()
 	const form = ref()
@@ -158,10 +160,7 @@
 		if (form.value) {
 			const valid = await form.value.validate()
 			if (valid) {
-				uni.showLoading({
-					title: '网络请求中'
-				})
-				uni.request({
+				request({
 					url: `${process.env.baseUrl}/students/${student.id}/lessons`,
 					method: 'POST',
 					data: newLesson,
@@ -175,9 +174,6 @@
 							calRef.value.init(newLesson.date)
 							calRef.value.change()
 						}, 1500)
-					},
-					complete: () => {
-						uni.hideLoading()
 					}
 				})
 			}
@@ -219,10 +215,7 @@
 	}
 
 	const updateLesson = (lesson, title) => {
-		uni.showLoading({
-			title: '网络请求中'
-		})
-		uni.request({
+		request({
 			url: `${process.env.baseUrl}/lessons/${lesson.id}`,
 			method: 'POST',
 			data: lesson,
@@ -230,18 +223,12 @@
 				uni.showToast({
 					title: title
 				})
-			},
-			complete: () => {
-				uni.hideLoading()
 			}
 		})
 	}
 
 	const loadData = (month, date) => {
-		uni.showLoading({
-			title: '加载中'
-		})
-		uni.request({
+		request({
 			url: `${process.env.baseUrl}/students/${lesson.studentId}/lessons?month=${month}&date=${date}`,
 			method: 'GET',
 			success: (res) => {
@@ -262,9 +249,6 @@
 					teacher: l.teacher,
 					time: `${l.startTime}-${l.endTime}`
 				}))
-			},
-			complete: () => {
-				uni.hideLoading()
 			}
 		})
 	}

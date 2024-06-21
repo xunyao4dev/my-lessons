@@ -1,6 +1,7 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
 const utils_utils = require("../../utils/utils.js");
+const utils_request = require("../../utils/request.js");
 var define_process_env_default = { baseUrl: "http://192.168.1.4:8992" };
 if (!Array) {
   const _easycom_uni_search_bar2 = common_vendor.resolveComponent("uni-search-bar");
@@ -47,18 +48,12 @@ const _sfc_main = {
       console.log(content);
     };
     common_vendor.onShow(() => {
-      common_vendor.index.showLoading({
-        title: "加载中"
-      });
-      common_vendor.index.request({
+      utils_request.request({
         url: `${define_process_env_default.baseUrl}/students`,
         method: "GET",
         success: (res) => {
           students.splice(0, students.length);
           students.push(...res.data.data);
-        },
-        complete: () => {
-          common_vendor.index.hideLoading();
         }
       });
     });

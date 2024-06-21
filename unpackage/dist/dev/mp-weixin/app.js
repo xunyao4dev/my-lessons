@@ -2,6 +2,7 @@
 Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
 const common_vendor = require("./common/vendor.js");
 if (!Math) {
+  "./pages/login/login.js";
   "./pages/index/index.js";
   "./pages/mine/mine.js";
   "./pages/add-student/add-student.js";
@@ -10,8 +11,16 @@ if (!Math) {
 }
 const _sfc_main = {
   onLaunch: function() {
-    console.warn("当前组件仅支持 uni_modules 目录结构 ，请升级 HBuilderX 到 3.1.0 版本以上！");
-    console.log("App Launch");
+    const token = common_vendor.index.getStorageSync("token");
+    if (token) {
+      common_vendor.index.reLaunch({
+        url: "/pages/index/index"
+      });
+    } else {
+      common_vendor.index.reLaunch({
+        url: "/pages/login/login"
+      });
+    }
   },
   onShow: function() {
     console.log("App Show");

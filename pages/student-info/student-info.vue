@@ -71,6 +71,8 @@
 	import {
 		useLessonStore
 	} from '../../store/lesson'
+	
+	import { request } from '../../utils/request'
 
 	const student = useStudentStore()
 	const lesson = useLessonStore()
@@ -116,17 +118,11 @@
 	}
 
 	onLoad((params) => {
-		uni.showLoading({
-			title: '加载中'
-		})
-		uni.request({
+		request({
 			url: `${process.env.baseUrl}/students/${params.studentId}`,
 			method: 'GET',
 			success: (res) => {
 				student.setStudent(res.data.data)
-			},
-			complete: () => {
-				uni.hideLoading()
 			}
 		})
 	})

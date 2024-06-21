@@ -1,0 +1,12 @@
+{
+  "indent_size": 2,
+  "indent_char": " ",
+  "max_preserve_newlines": 1,
+  "end_with_newline": true,
+  "e4x": true,
+  "jslint_happy": true,
+  "space_after_anon_function": true,
+  "space_in_paren": true,
+  "unformatted": ["a", "sub", "sup", "b", "i", "u"],
+  "wrap_line_length": 0
+}

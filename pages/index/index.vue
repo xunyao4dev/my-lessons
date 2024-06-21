@@ -48,6 +48,8 @@
 		formatSubjectAbbr
 	} from '../../utils/utils'
 	
+	import { request } from '../../utils/request'
+	
 	const students = reactive([])
 	const fabContent = reactive([{
 		text: '添加学生',
@@ -77,18 +79,12 @@
 
 
 	onShow(() => {
-		uni.showLoading({
-			title: '加载中'
-		})
-		uni.request({
+		request({
 			url: `${process.env.baseUrl}/students`,
 			method: 'GET',
 			success: (res) => {
 				students.splice(0, students.length)
 				students.push(...res.data.data)
-			},
-			complete: () => {
-				uni.hideLoading()
 			}
 		})
 	})

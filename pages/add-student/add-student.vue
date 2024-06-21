@@ -51,6 +51,8 @@
 		genderOptions,
 		gradeOptions
 	} from '../../utils/constant'
+	
+	import { request } from '../../utils/request'
 
 	const form = ref()
 
@@ -96,10 +98,7 @@
 		if (form.value) {
 			const valid = await form.value.validate()
 			if (valid) {
-				uni.showLoading({
-					title: '网络请求中'
-				})
-				uni.request({
+				request({
 					url: `${process.env.baseUrl}/students`,
 					method: 'POST',
 					data: student,
@@ -112,9 +111,6 @@
 							studentStore.setStudent(student)
 							uni.navigateBack()
 						}, 1500)
-					},
-					complete: () => {
-						uni.hideLoading()
 					}
 				})
 			}

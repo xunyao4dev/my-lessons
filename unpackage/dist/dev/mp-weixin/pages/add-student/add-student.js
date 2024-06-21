@@ -2,6 +2,7 @@
 const common_vendor = require("../../common/vendor.js");
 const store_student = require("../../store/student.js");
 const utils_constant = require("../../utils/constant.js");
+const utils_request = require("../../utils/request.js");
 var define_process_env_default = { baseUrl: "http://192.168.1.4:8992" };
 if (!Array) {
   const _easycom_uni_easyinput2 = common_vendor.resolveComponent("uni-easyinput");
@@ -67,10 +68,7 @@ const _sfc_main = {
       if (form.value) {
         const valid = await form.value.validate();
         if (valid) {
-          common_vendor.index.showLoading({
-            title: "网络请求中"
-          });
-          common_vendor.index.request({
+          utils_request.request({
             url: `${define_process_env_default.baseUrl}/students`,
             method: "POST",
             data: student,
@@ -83,9 +81,6 @@ const _sfc_main = {
                 studentStore.setStudent(student);
                 common_vendor.index.navigateBack();
               }, 1500);
-            },
-            complete: () => {
-              common_vendor.index.hideLoading();
             }
           });
         }

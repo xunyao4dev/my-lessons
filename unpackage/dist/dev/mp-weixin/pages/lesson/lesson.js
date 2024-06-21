@@ -5,6 +5,7 @@ const store_lesson = require("../../store/lesson.js");
 const store_student = require("../../store/student.js");
 const utils_constant = require("../../utils/constant.js");
 const utils_utils = require("../../utils/utils.js");
+const utils_request = require("../../utils/request.js");
 var define_process_env_default = { baseUrl: "http://192.168.1.4:8992" };
 if (!Array) {
   const _easycom_bruce_calendar2 = common_vendor.resolveComponent("bruce-calendar");
@@ -108,10 +109,7 @@ const _sfc_main = {
       if (form.value) {
         const valid = await form.value.validate();
         if (valid) {
-          common_vendor.index.showLoading({
-            title: "网络请求中"
-          });
-          common_vendor.index.request({
+          utils_request.request({
             url: `${define_process_env_default.baseUrl}/students/${student.id}/lessons`,
             method: "POST",
             data: newLesson,
@@ -125,9 +123,6 @@ const _sfc_main = {
                 calRef.value.init(newLesson.date);
                 calRef.value.change();
               }, 1500);
-            },
-            complete: () => {
-              common_vendor.index.hideLoading();
             }
           });
         }
@@ -163,10 +158,7 @@ const _sfc_main = {
       return `${year}-${month}`;
     };
     const updateLesson = (lesson2, title) => {
-      common_vendor.index.showLoading({
-        title: "网络请求中"
-      });
-      common_vendor.index.request({
+      utils_request.request({
         url: `${define_process_env_default.baseUrl}/lessons/${lesson2.id}`,
         method: "POST",
         data: lesson2,
@@ -174,17 +166,11 @@ const _sfc_main = {
           common_vendor.index.showToast({
             title
           });
-        },
-        complete: () => {
-          common_vendor.index.hideLoading();
         }
       });
     };
     const loadData = (month, date) => {
-      common_vendor.index.showLoading({
-        title: "加载中"
-      });
-      common_vendor.index.request({
+      utils_request.request({
         url: `${define_process_env_default.baseUrl}/students/${lesson.studentId}/lessons?month=${month}&date=${date}`,
         method: "GET",
         success: (res) => {
@@ -205,9 +191,6 @@ const _sfc_main = {
             teacher: l.teacher,
             time: `${l.startTime}-${l.endTime}`
           }));
-        },
-        complete: () => {
-          common_vendor.index.hideLoading();
         }
       });
     };
@@ -233,7 +216,7 @@ const _sfc_main = {
           return common_vendor.e({
             a: lesson2.status === 2
           }, lesson2.status === 2 ? {
-            b: common_assets._imports_0
+            b: common_assets._imports_0$1
           } : {}, {
             c: common_vendor.t(common_vendor.unref(utils_utils.formatSubject)(lesson2.subject)),
             d: common_vendor.t(lesson2.time),

@@ -2,6 +2,7 @@
 const common_vendor = require("../../common/vendor.js");
 const store_student = require("../../store/student.js");
 const store_lesson = require("../../store/lesson.js");
+const utils_request = require("../../utils/request.js");
 const utils_constant = require("../../utils/constant.js");
 const utils_utils = require("../../utils/utils.js");
 var define_process_env_default = { baseUrl: "http://192.168.1.4:8992" };
@@ -48,17 +49,11 @@ const _sfc_main = {
       });
     };
     common_vendor.onLoad((params) => {
-      common_vendor.index.showLoading({
-        title: "加载中"
-      });
-      common_vendor.index.request({
+      utils_request.request({
         url: `${define_process_env_default.baseUrl}/students/${params.studentId}`,
         method: "GET",
         success: (res) => {
           student.setStudent(res.data.data);
-        },
-        complete: () => {
-          common_vendor.index.hideLoading();
         }
       });
     });
