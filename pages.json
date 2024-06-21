@@ -1,5 +1,5 @@
 {
-	"pages": [{
+	"pages": [ {
 			"path": "pages/login/login",
 			"style": {
 				"navigationStyle": "custom"
@@ -45,7 +45,7 @@
 		}
 	},
 	"tabBar": {
-		"list": [{
+		"list": [ {
 			"iconPath": "static/list.png",
 			"selectedIconPath": "static/list.png",
 			"pagePath": "pages/index/index",
@@ -55,6 +55,6 @@
 			"selectedIconPath": "static/mine.png",
 			"pagePath": "pages/mine/mine",
 			"text": "我的"
-		}]
+		} ]
 	}
 }

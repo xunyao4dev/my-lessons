@@ -14,8 +14,7 @@
 				<uni-data-select v-model="student.grade" :localdata="gradeOptions" placeholder="请选择年级"></uni-data-select>
 			</uni-forms-item>
 			<uni-forms-item label="科目" label-width="70" required name="subjects">
-				<uni-data-checkbox mode="tag" multiple v-model="student.subjects"
-					:localdata="subjectOptions"></uni-data-checkbox>
+				<uni-data-checkbox mode="tag" multiple v-model="student.subjects" :localdata="subjectOptions"></uni-data-checkbox>
 			</uni-forms-item>
 			<uni-forms-item label="手机" label-width="70" required name="phone">
 				<uni-easyinput v-model="student.phone" placeholder="请输入联系方式" />
@@ -26,7 +25,6 @@
 			<button class="button" type="primary" plain @click="submit">保存</button>
 		</uni-forms>
 	</view>
-
 </template>
 
 <script setup>
@@ -38,39 +36,35 @@
 	import {
 		onLoad
 	} from '@dcloudio/uni-app'
-
 	import {
 		useStudentStore
 	} from '../../store/student'
-
 	const studentStore = useStudentStore()
-	const student = reactive({})
-
+	const student = reactive( {} )
 	import {
 		subjectOptions,
 		genderOptions,
 		gradeOptions
 	} from '../../utils/constant'
-	
-	import { request } from '../../utils/request'
-
+	import {
+		request
+	} from '../../utils/request'
 	const form = ref()
-
-	const rules = reactive({
+	const rules = reactive( {
 		name: {
-			rules: [{
+			rules: [ {
 				required: true,
 				errorMessage: '姓名不能为空'
-			}]
+			} ]
 		},
 		gender: {
-			rules: [{
+			rules: [ {
 				required: true,
 				errorMessage: '性别不能为空'
-			}]
+			} ]
 		},
 		remainHours: {
-			rules: [{
+			rules: [ {
 					required: true,
 					errorMessage: '课时不能为空'
 				},
@@ -81,49 +75,48 @@
 			]
 		},
 		subjects: {
-			rules: [{
+			rules: [ {
 				required: true,
 				errorMessage: '科目不能为空'
-			}]
+			} ]
 		},
 		phone: {
-			rules: [{
+			rules: [ {
 				required: true,
 				errorMessage: '手机号不能为空'
-			}]
+			} ]
 		}
-	})
-
+	} )
 	const submit = async () => {
-		if (form.value) {
+		if ( form.value ) {
 			const valid = await form.value.validate()
-			if (valid) {
-				request({
+			if ( valid ) {
+				request( {
 					url: `${process.env.baseUrl}/students`,
 					method: 'POST',
 					data: student,
 					success: () => {
-						uni.showToast({
+						uni.showToast( {
 							title: student.id ? '修改成功' : '添加成功',
 							icon: 'success'
-						})
-						setTimeout(() => {
-							studentStore.setStudent(student)
+						} )
+						setTimeout( () => {
+							studentStore.setStudent( student )
 							uni.navigateBack()
-						}, 1500)
+						}, 1500 )
 					}
-				})
+				} )
 			}
 		}
 	}
-
-	onLoad((params) => {
-		if (!params.studentId) {
+	onLoad( ( params ) => {
+		if ( !params.studentId ) {
 			// 编辑
 			studentStore.reset()
 		}
-		Object.assign(student, toRaw(studentStore.$state));
-	})
+		Object.assign( student, toRaw( studentStore.$state ) );
+	} )
+
 </script>
 
 <style>
@@ -132,4 +125,5 @@
 		line-height: 24px;
 		padding: 20px;
 	}
+
 </style>

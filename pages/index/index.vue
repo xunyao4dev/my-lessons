@@ -2,19 +2,15 @@
 	<view class="container">
 		<uni-search-bar radius="5" bg-color="#fff" placeholder="搜索学生" clearButton="auto" @confirm="search" />
 		<uni-list class="student-list" :border="false">
-			<view v-for="student in students" :key="student.id" class="student-item"
-				@tap="navigateToStudent(student.id)">
+			<view v-for="student in students" :key="student.id" class="student-item" @tap="navigateToStudent(student.id)">
 				<view class="left-column">
 					<view class="header">
-						<uni-icons custom-prefix="iconfont" :type="student.gender === 0 ? 'icon-male' : 'icon-female'"
-							class="gender-icon"></uni-icons>
+						<uni-icons custom-prefix="iconfont" :type="student.gender === 0 ? 'icon-male' : 'icon-female'" class="gender-icon"></uni-icons>
 						<text class="name">{{student.name}}</text>
 						<text class="student-grade">{{ formatGrade(student.grade) }}</text>
 					</view>
 					<view class="subjects">
-						<uni-tag :inverted="true" v-for="subject in student.subjects" :key="subject"
-							:text="formatSubjectAbbr(subject)" type="warning" size="mini"
-							custom-style="margin-right: 4px; font-weight: bold;" />
+						<uni-tag :inverted="true" v-for="subject in student.subjects" :key="subject" :text="formatSubjectAbbr(subject)" type="warning" size="mini" custom-style="margin-right: 4px; font-weight: bold;" />
 					</view>
 				</view>
 				<view class="right-column">
@@ -37,57 +33,51 @@
 	import {
 		onShow
 	} from '@dcloudio/uni-app'
-
 	import {
 		subjectOptions,
 		gradeOptions
 	} from '../../utils/constant'
-
 	import {
 		formatGrade,
 		formatSubjectAbbr
 	} from '../../utils/utils'
-	
-	import { request } from '../../utils/request'
-	
-	const students = reactive([])
-	const fabContent = reactive([{
+	import {
+		request
+	} from '../../utils/request'
+	const students = reactive( [] )
+	const fabContent = reactive( [ {
 		text: '添加学生',
 		icon: 'icon-add-student',
 		selectedIcon: 'icon-add-student'
-	}])
-
-	const navigateToStudent = (id) => {
-		uni.navigateTo({
+	} ] )
+	const navigateToStudent = ( id ) => {
+		uni.navigateTo( {
 			url: `/pages/student-info/student-info?studentId=${id}`,
 			animationType: 'pop-in',
 			animationDuration: 200
-		})
+		} )
 	}
-
-	const trigger = (e) => {
-		if (e.index === 0) {
-			uni.navigateTo({
+	const trigger = ( e ) => {
+		if ( e.index === 0 ) {
+			uni.navigateTo( {
 				url: "/pages/add-student/add-student"
-			})
+			} )
 		}
 	}
-
-	const search = (content) => {
-		console.log(content)
+	const search = ( content ) => {
+		console.log( content )
 	}
-
-
-	onShow(() => {
-		request({
+	onShow( () => {
+		request( {
 			url: `${process.env.baseUrl}/students`,
 			method: 'GET',
-			success: (res) => {
-				students.splice(0, students.length)
-				students.push(...res.data.data)
+			success: ( res ) => {
+				students.splice( 0, students.length )
+				students.push( ...res.data.data )
 			}
-		})
-	})
+		} )
+	} )
+
 </script>
 <style scoped>
 	.container {
@@ -177,4 +167,5 @@
 		color: #888;
 		margin-bottom: 4px;
 	}
+
 </style>

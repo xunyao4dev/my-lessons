@@ -14,27 +14,26 @@
 	import {
 		onLoad
 	} from '@dcloudio/uni-app'
-
-	const onGetUserInfo = async (e) => {
-		if (e.detail.errMsg === "getUserInfo:ok") {
+	const onGetUserInfo = async ( e ) => {
+		if ( e.detail.errMsg === "getUserInfo:ok" ) {
 			// 用户允许授权获取用户信息
 			const {
 				encryptedData,
 				iv
 			} = e.detail
 			try {
-				uni.showToast({
+				uni.showToast( {
 					title: '登录中...'
-				})
-				const loginRes = await uni.login({
+				} )
+				const loginRes = await uni.login( {
 					provider: 'weixin'
-				})
+				} )
 				const {
 					code
 				} = loginRes
-				if (code) {
+				if ( code ) {
 					// 向后台发送 code 和 userInfo
-					uni.request({
+					uni.request( {
 						url: `${process.env.baseUrl}/wechat/login`,
 						method: 'POST',
 						data: {
@@ -42,41 +41,43 @@
 							encryptedData,
 							iv
 						},
-						success: (res) => {
-							const {data} = res.data
-							uni.setStorageSync('token', data.token)
-							uni.showToast({
+						success: ( res ) => {
+							const {
+								data
+							} = res.data
+							uni.setStorageSync( 'token', data.token )
+							uni.showToast( {
 								title: '登录成功',
 								success: () => {
-									uni.switchTab({
+									uni.switchTab( {
 										url: '/pages/index/index'
-									})
+									} )
 								}
-							})
+							} )
 						}
-					})
+					} )
 				}
-			} catch (error) {
-				uni.showToast({
+			} catch ( error ) {
+				uni.showToast( {
 					title: '微信登录失败，请稍后重试'
-				})
+				} )
 			} finally {
 				uni.hideToast()
 			}
 		} else {
-			uni.showToast({
+			uni.showToast( {
 				title: '用户拒绝'
-			})
+			} )
 		}
 	}
-
-	onLoad(() => {
+	onLoad( () => {
 		// 设置状态栏颜色为透明
-		uni.setNavigationBarColor({
+		uni.setNavigationBarColor( {
 			frontColor: '#ffffff', // 状态栏字体颜色
 			backgroundColor: '#00000000' // 状态栏背景色透明
-		})
-	})
+		} )
+	} )
+
 </script>
 
 <style>
@@ -122,4 +123,5 @@
 		margin-left: 10px;
 		font-size: 18px;
 	}
+
 </style>

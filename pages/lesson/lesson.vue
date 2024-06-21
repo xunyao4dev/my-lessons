@@ -1,10 +1,8 @@
 <template>
 	<view class="container">
-		<bruce-calendar ref="calRef" :selected="selected" @change="change" @monthSwitch="monthSwitch" :insert="true"
-			:lunar="true" :start-date="'2000-1-1'" :end-date="'2099-12-31'" />
+		<bruce-calendar ref="calRef" :selected="selected" @change="change" @monthSwitch="monthSwitch" :insert="true" :lunar="true" :start-date="'2000-1-1'" :end-date="'2099-12-31'" />
 		<uni-swipe-action>
-			<uni-swipe-action-item v-for="lesson in lessons" :key="lesson.id" :right-options="swipeOptions"
-				@click="swipeClick(lesson)" :disabled="lesson.status === 2">
+			<uni-swipe-action-item v-for="lesson in lessons" :key="lesson.id" :right-options="swipeOptions" @click="swipeClick(lesson)" :disabled="lesson.status === 2">
 				<view class="course-info">
 					<image v-if="lesson.status === 2" src="@/static/cancelled.png" class="cancelled-stamp"></image>
 					<view class="course-content">
@@ -37,8 +35,7 @@
 				<view class="dialog-body">
 					<uni-forms ref="form" :rules="rules" :model="newLesson">
 						<uni-forms-item label="科目" label-width="70" required name="subject">
-							<uni-data-select v-model="newLesson.subject" :localdata="subjectOptions"
-								placeholder="请选择科目"></uni-data-select>
+							<uni-data-select v-model="newLesson.subject" :localdata="subjectOptions" placeholder="请选择科目"></uni-data-select>
 						</uni-forms-item>
 						<uni-forms-item label="教师" label-width="70" required name="teacher">
 							<uni-easyinput v-model="newLesson.teacher" placeholder="请输入教师" />
@@ -47,8 +44,7 @@
 							<uni-easyinput v-model="newLesson.classroom" placeholder="请输入教室" />
 						</uni-forms-item>
 						<uni-forms-item label="日期" label-width="70" required name="date">
-							<uni-datetime-picker v-model="newLesson.date" :start="formatDate(new Date())" type="date"
-								placeholder="请选择日期" />
+							<uni-datetime-picker v-model="newLesson.date" :start="formatDate(new Date())" type="date" placeholder="请选择日期" />
 						</uni-forms-item>
 						<uni-forms-item label="时间" label-width="70" required name="time">
 							<time-range-picker v-model="newLesson.time" @complete="handleTimeSelection" />
@@ -82,181 +78,166 @@
 	import {
 		formatSubject
 	} from '../../utils/utils'
-	
-	import { request } from '../../utils/request'
-
+	import {
+		request
+	} from '../../utils/request'
 	const calRef = ref()
 	const form = ref()
 	const lesson = useLessonStore()
 	const student = useStudentStore()
-	const selected = ref([])
-	const lessons = ref([])
-
-	const swipeOptions = reactive([{
+	const selected = ref( [] )
+	const lessons = ref( [] )
+	const swipeOptions = reactive( [ {
 		text: '取消',
 		style: {
 			backgroundColor: '#F56C6C'
 		}
-	}])
-
-	const swipeClick = (lesson) => {
-		uni.showModal({
+	} ] )
+	const swipeClick = ( lesson ) => {
+		uni.showModal( {
 			title: '确认取消？',
-			success: (res) => {
-				if (res.confirm) {
+			success: ( res ) => {
+				if ( res.confirm ) {
 					lesson.status = 2
-					updateLesson(lesson, '取消成功')
+					updateLesson( lesson, '取消成功' )
 				}
 			}
-		})
+		} )
 	}
-
-	const newLesson = reactive({})
-
-	const rules = reactive({
+	const newLesson = reactive( {} )
+	const rules = reactive( {
 		subject: {
-			rules: [{
+			rules: [ {
 				required: true,
 				errorMessage: '科目不能为空'
-			}]
+			} ]
 		},
 		teacher: {
-			rules: [{
+			rules: [ {
 				required: true,
 				errorMessage: '教师不能为空'
-			}]
+			} ]
 		},
 		classroom: {
-			rules: [{
+			rules: [ {
 				required: true,
 				errorMessage: '教室不能为空'
-			}]
+			} ]
 		},
 		date: {
-			rules: [{
+			rules: [ {
 				required: true,
 				errorMessage: '日期不能为空'
-			}]
+			} ]
 		},
 		time: {
-			rules: [{
+			rules: [ {
 				required: true,
 				errorMessage: '时间不能为空'
-			}]
+			} ]
 		}
-	})
-
+	} )
 	const popup = ref()
-
 	const openDialog = () => {
 		popup.value.open()
 	}
-
 	const closeDialog = () => {
 		popup.value.close()
 	}
-
 	const addLesson = async () => {
-		if (form.value) {
+		if ( form.value ) {
 			const valid = await form.value.validate()
-			if (valid) {
-				request({
+			if ( valid ) {
+				request( {
 					url: `${process.env.baseUrl}/students/${student.id}/lessons`,
 					method: 'POST',
 					data: newLesson,
 					success: () => {
-						uni.showToast({
+						uni.showToast( {
 							title: '添加成功',
 							icon: 'success'
-						})
-						setTimeout(() => {
+						} )
+						setTimeout( () => {
 							closeDialog()
-							calRef.value.init(newLesson.date)
+							calRef.value.init( newLesson.date )
 							calRef.value.change()
-						}, 1500)
+						}, 1500 )
 					}
-				})
+				} )
 			}
 		}
 	}
-
-	const change = (params) => {
+	const change = ( params ) => {
 		const {
 			year,
 			month,
 			date
 		} = params
-		loadData(`${year}-${String(month).padStart(2, '0')}`, `${year}-${String(month).padStart(2, '0')}-${date}`)
+		loadData( `${year}-${String(month).padStart(2, '0')}`, `${year}-${String(month).padStart(2, '0')}-${date}` )
 	}
-
-	const monthSwitch = (params) => {
+	const monthSwitch = ( params ) => {
 		const {
 			year,
 			month
 		} = params
-		loadData(`${year}-${String(month).padStart(2, '0')}`)
+		loadData( `${year}-${String(month).padStart(2, '0')}` )
 	}
-
-	const handleTimeSelection = (time) => {
+	const handleTimeSelection = ( time ) => {
 		newLesson.time = time
 	}
-
-	const formatDate = (date) => {
+	const formatDate = ( date ) => {
 		const year = date.getFullYear()
-		const month = String(date.getMonth() + 1).padStart(2, '0')
-		const day = String(date.getDate()).padStart(2, '0')
+		const month = String( date.getMonth() + 1 ).padStart( 2, '0' )
+		const day = String( date.getDate() ).padStart( 2, '0' )
 		return `${year}-${month}-${day}`
 	}
-
-	const formatMonth = (date) => {
+	const formatMonth = ( date ) => {
 		const year = date.getFullYear()
-		const month = String(date.getMonth() + 1).padStart(2, '0')
+		const month = String( date.getMonth() + 1 ).padStart( 2, '0' )
 		return `${year}-${month}`
 	}
-
-	const updateLesson = (lesson, title) => {
-		request({
+	const updateLesson = ( lesson, title ) => {
+		request( {
 			url: `${process.env.baseUrl}/lessons/${lesson.id}`,
 			method: 'POST',
 			data: lesson,
 			success: () => {
-				uni.showToast({
+				uni.showToast( {
 					title: title
-				})
+				} )
 			}
-		})
+		} )
 	}
-
-	const loadData = (month, date) => {
-		request({
+	const loadData = ( month, date ) => {
+		request( {
 			url: `${process.env.baseUrl}/students/${lesson.studentId}/lessons?month=${month}&date=${date}`,
 			method: 'GET',
-			success: (res) => {
+			success: ( res ) => {
 				const {
 					dailySchedules,
 					currentSchedules
 				} = res.data.data
-				selected.value = dailySchedules.map(s => ({
+				selected.value = dailySchedules.map( s => ( {
 					date: s,
 					color: 'red',
 					icon: 'flag-filled'
-				}))
-				lessons.value = currentSchedules.map(l => ({
+				} ) )
+				lessons.value = currentSchedules.map( l => ( {
 					id: l.lessonId,
 					status: l.status,
 					subject: l.subject,
 					classroom: l.classroom,
 					teacher: l.teacher,
 					time: `${l.startTime}-${l.endTime}`
-				}))
+				} ) )
 			}
-		})
+		} )
 	}
-
-	onBeforeMount(() => {
+	onBeforeMount( () => {
 		const date = new Date()
-		loadData(formatMonth(date), formatDate(date))
-	})
+		loadData( formatMonth( date ), formatDate( date ) )
+	} )
+
 </script>
 
 <style scoped>
@@ -370,4 +351,5 @@
 		margin: 0 10px;
 		width: 30%;
 	}
+
 </style>

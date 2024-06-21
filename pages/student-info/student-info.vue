@@ -52,80 +52,69 @@
 	</view>
 </template>
 
-
 <script setup>
 	import {
 		ref,
 		computed,
 		reactive
 	} from 'vue'
-
 	import {
 		onLoad
 	} from '@dcloudio/uni-app'
-
 	import {
 		useStudentStore
 	} from '@/store/student'
-
 	import {
 		useLessonStore
 	} from '../../store/lesson'
-	
-	import { request } from '../../utils/request'
-
+	import {
+		request
+	} from '../../utils/request'
 	const student = useStudentStore()
 	const lesson = useLessonStore()
-
 	import {
 		subjectOptions,
 		genderOptions,
 		gradeOptions
 	} from '../../utils/constant'
-
 	import {
 		formatGrade
 	} from '../../utils/utils'
-
-	const makeCall = (phone) => {
-		uni.makePhoneCall({
+	const makeCall = ( phone ) => {
+		uni.makePhoneCall( {
 			phoneNumber: phone,
-			fail: (err) => {
-				console.error(err)
+			fail: ( err ) => {
+				console.error( err )
 			}
-		})
+		} )
 	}
-
-	const genderText = computed(() => genderOptions.find(i => i.value === student.gender)?.text)
-
-	const subjectsText = computed(() => {
+	const genderText = computed( () => genderOptions.find( i => i.value === student.gender )?.text )
+	const subjectsText = computed( () => {
 		return student.subjects
-			.map(subject => subjectOptions.find(i => subject === i.value)?.text)
-			.join(', ')
-	})
-
-	const editInfo = (studentId) => {
-		uni.navigateTo({
+			.map( subject => subjectOptions.find( i => subject === i.value )?.text )
+			.join( ', ' )
+	} )
+	const editInfo = ( studentId ) => {
+		uni.navigateTo( {
 			url: `/pages/add-student/add-student?studentId=${studentId}`
-		})
+		} )
 	}
-
 	const lessonInfo = () => {
-		lesson.setStudentId(student.id)
-		uni.navigateTo({
+		lesson.setStudentId( student.id )
+		uni.navigateTo( {
 			url: '/pages/lesson/lesson'
-		})
+		} )
 	}
-
-	onLoad((params) => {
-		request({
+	onLoad( ( params ) => {
+		request( {
 			url: `${process.env.baseUrl}/students/${params.studentId}`,
 			method: 'GET',
-			success: (res) => {
-				student.setStudent(res.data.data)
+			success: ( res ) => {
+				student.setStudent( res.data.data )
 			}
-		})
-	})
+		} )
+	} )
+
 </script>
 <style scoped>
 	.container {
@@ -190,4 +179,5 @@
 	.clickable {
 		color: #007bff;
 	}
+
 </style>
