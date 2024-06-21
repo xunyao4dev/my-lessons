@@ -1,7 +1,9 @@
 <template>
 	<view class="uni-calendar">
-		<view v-if="!insert&&show" class="uni-calendar__mask" :class="{'uni-calendar--mask-show':aniMaskShow}" @click="clean"></view>
-		<view v-if="insert || show" class="uni-calendar__content" :class="{'uni-calendar--fixed':!insert,'uni-calendar--ani-show':aniMaskShow}">
+		<view v-if="!insert&&show" class="uni-calendar__mask" :class="{'uni-calendar--mask-show':aniMaskShow}"
+			@click="clean"></view>
+		<view v-if="insert || show" class="uni-calendar__content"
+			:class="{'uni-calendar--fixed':!insert,'uni-calendar--ani-show':aniMaskShow}">
 			<view v-if="!insert" class="uni-calendar__header uni-calendar--fixed-top">
 				<view class="uni-calendar__header-btn-box" @click="close">
 					<text class="uni-calendar__header-text uni-calendar--fixed-width">{{cancelText}}</text>
@@ -52,7 +54,8 @@
 				</view>
 				<view class="uni-calendar__weeks" v-for="(item,weekIndex) in weeks" :key="weekIndex">
 					<view class="uni-calendar__weeks-item" v-for="(weeks,weeksIndex) in item" :key="weeksIndex">
-						<calendar-item class="uni-calendar-item--hook" :weeks="weeks" :calendar="calendar" :selected="selected" :lunar="lunar" @change="choiceDate"></calendar-item>
+						<calendar-item class="uni-calendar-item--hook" :weeks="weeks" :calendar="calendar"
+							:selected="selected" :lunar="lunar" @change="choiceDate"></calendar-item>
 					</view>
 				</view>
 			</view>
@@ -64,9 +67,13 @@
 	import Calendar from './util.js';
 	import CalendarItem from './uni-calendar-item.vue'
 
-	import { initVueI18n } from '@dcloudio/uni-i18n'
+	import {
+		initVueI18n
+	} from '@dcloudio/uni-i18n'
 	import i18nMessages from './i18n/index.js'
-	const {	t	} = initVueI18n(i18nMessages)
+	const {
+		t
+	} = initVueI18n(i18nMessages)
 
 	/**
 	 * Calendar 日历
@@ -92,7 +99,7 @@
 		components: {
 			CalendarItem
 		},
-		emits:['close','confirm','change','monthSwitch'],
+		emits: ['close', 'confirm', 'change', 'monthSwitch'],
 		props: {
 			date: {
 				type: String,
@@ -142,7 +149,7 @@
 				aniMaskShow: false
 			}
 		},
-		computed:{
+		computed: {
 			/**
 			 * for i18n
 			 */
@@ -183,12 +190,12 @@
 				// this.cale.setDate(newVal)
 				this.init(newVal)
 			},
-			startDate(val){
+			startDate(val) {
 				this.cale.resetSatrtDate(val)
 				this.cale.setDate(this.nowDate.fullDate)
 				this.weeks = this.cale.weeks
 			},
-			endDate(val){
+			endDate(val) {
 				this.cale.resetEndDate(val)
 				this.cale.setDate(this.nowDate.fullDate)
 				this.weeks = this.cale.weeks
@@ -214,11 +221,14 @@
 				const value = e.detail.value + '-1'
 				this.setDate(value)
 
-				const { year,month } = this.cale.getDate(value)
-        this.$emit('monthSwitch', {
-            year,
-            month
-        })
+				const {
+					year,
+					month
+				} = this.cale.getDate(value)
+				this.$emit('monthSwitch', {
+					year,
+					month
+				})
 			},
 			/**
 			 * 初始化日期显示
@@ -326,11 +336,7 @@
 			backToday() {
 				const nowYearMonth = `${this.nowDate.year}-${this.nowDate.month}`
 				const date = this.cale.getDate(new Date())
-        const todayYearMonth = `${date.year}-${date.month}`
-
-        if(nowYearMonth !== todayYearMonth) {
-          this.monthSwitch()
-        }
+				const todayYearMonth = `${date.year}-${date.month}`
 
 				this.init(date.fullDate)
 				this.change()
@@ -369,11 +375,12 @@
 	$uni-bg-color-mask: rgba($color: #000000, $alpha: 0.4);
 	$uni-border-color: #EDEDED;
 	$uni-text-color: #333;
-	$uni-bg-color-hover:#f1f1f1;
-	$uni-font-size-base:14px;
+	$uni-bg-color-hover: #f1f1f1;
+	$uni-font-size-base: 14px;
 	$uni-text-color-placeholder: #808080;
 	$uni-color-subtitle: #555555;
-	$uni-text-color-grey:#999;
+	$uni-text-color-grey: #999;
+
 	.uni-calendar {
 		/* #ifndef APP-NVUE */
 		display: flex;

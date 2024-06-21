@@ -237,10 +237,13 @@ const _sfc_main = {
      * 回到今天
      */
     backToday() {
-      `${this.nowDate.year}-${this.nowDate.month}`;
+      const nowYearMonth = `${this.nowDate.year}-${this.nowDate.month}`;
       const date = this.cale.getDate(/* @__PURE__ */ new Date());
-      `${date.year}-${date.month}`;
+      const todayYearMonth = `${date.year}-${date.month}`;
       this.init(date.fullDate);
+      if (nowYearMonth !== todayYearMonth) {
+        this.monthSwitch();
+      }
       this.change();
     },
     /**

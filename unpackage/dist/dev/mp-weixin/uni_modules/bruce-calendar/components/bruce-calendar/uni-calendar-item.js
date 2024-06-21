@@ -54,6 +54,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     a: $props.selected && $props.weeks.extraInfo
   }, $props.selected && $props.weeks.extraInfo ? {
     b: common_vendor.p({
+      ["custom-prefix"]: "iconfont",
       color: $props.weeks.extraInfo.color || "#fa3534",
       type: $props.weeks.extraInfo.icon,
       size: "15"

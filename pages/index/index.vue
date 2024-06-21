@@ -13,8 +13,8 @@
 					</view>
 					<view class="subjects">
 						<uni-tag :inverted="true" v-for="subject in student.subjects" :key="subject"
-							:text="formatSubject(subject)" type="warning" size="mini"
-							custom-style="margin-right: 4px;" />
+							:text="formatSubjectAbbr(subject)" type="warning" size="mini"
+							custom-style="margin-right: 4px; font-weight: bold;" />
 					</view>
 				</view>
 				<view class="right-column">
@@ -45,14 +45,14 @@
 
 	import {
 		formatGrade,
-		formatSubject
+		formatSubjectAbbr
 	} from '../../utils/utils'
-
+	
 	const students = reactive([])
 	const fabContent = reactive([{
-		iconPath: '/static/add-student.png',
-		selectedIconPath: '/static/add-student.png',
-		text: '添加学生'
+		text: '添加学生',
+		icon: 'icon-add-student',
+		selectedIcon: 'icon-add-student'
 	}])
 
 	const navigateToStudent = (id) => {
@@ -77,12 +77,18 @@
 
 
 	onShow(() => {
+		uni.showLoading({
+			title: '加载中'
+		})
 		uni.request({
-			url: 'http://localhost:8992/students',
+			url: `${process.env.baseUrl}/students`,
 			method: 'GET',
 			success: (res) => {
 				students.splice(0, students.length)
 				students.push(...res.data.data)
+			},
+			complete: () => {
+				uni.hideLoading()
 			}
 		})
 	})
@@ -151,7 +157,7 @@
 	}
 
 	.student-grade {
-		color: #aaa;
+		color: #888;
 		margin-left: 3px;
 		font-size: 12px;
 		margin-top: 5px;

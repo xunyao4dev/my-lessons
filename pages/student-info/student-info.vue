@@ -116,11 +116,17 @@
 	}
 
 	onLoad((params) => {
+		uni.showLoading({
+			title: '加载中'
+		})
 		uni.request({
-			url: `http://localhost:8992/students/${params.studentId}`,
+			url: `${process.env.baseUrl}/students/${params.studentId}`,
 			method: 'GET',
 			success: (res) => {
 				student.setStudent(res.data.data)
+			},
+			complete: () => {
+				uni.hideLoading()
 			}
 		})
 	})

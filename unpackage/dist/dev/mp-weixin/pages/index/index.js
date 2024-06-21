@@ -1,6 +1,7 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
 const utils_utils = require("../../utils/utils.js");
+var define_process_env_default = { baseUrl: "http://192.168.1.4:8992" };
 if (!Array) {
   const _easycom_uni_search_bar2 = common_vendor.resolveComponent("uni-search-bar");
   const _easycom_uni_icons2 = common_vendor.resolveComponent("uni-icons");
@@ -24,9 +25,9 @@ const _sfc_main = {
   setup(__props) {
     const students = common_vendor.reactive([]);
     const fabContent = common_vendor.reactive([{
-      iconPath: "/static/add-student.png",
-      selectedIconPath: "/static/add-student.png",
-      text: "添加学生"
+      text: "添加学生",
+      icon: "icon-add-student",
+      selectedIcon: "icon-add-student"
     }]);
     const navigateToStudent = (id) => {
       common_vendor.index.navigateTo({
@@ -46,12 +47,18 @@ const _sfc_main = {
       console.log(content);
     };
     common_vendor.onShow(() => {
+      common_vendor.index.showLoading({
+        title: "加载中"
+      });
       common_vendor.index.request({
-        url: "http://localhost:8992/students",
+        url: `${define_process_env_default.baseUrl}/students`,
         method: "GET",
         success: (res) => {
           students.splice(0, students.length);
           students.push(...res.data.data);
+        },
+        complete: () => {
+          common_vendor.index.hideLoading();
         }
       });
     });
@@ -79,10 +86,10 @@ const _sfc_main = {
                 b: "1cf27b2a-3-" + i0 + "-" + i1 + ",1cf27b2a-1",
                 c: common_vendor.p({
                   inverted: true,
-                  text: common_vendor.unref(utils_utils.formatSubject)(subject),
+                  text: common_vendor.unref(utils_utils.formatSubjectAbbr)(subject),
                   type: "warning",
                   size: "mini",
-                  ["custom-style"]: "margin-right: 4px;"
+                  ["custom-style"]: "margin-right: 4px; font-weight: bold;"
                 })
               };
             }),

@@ -20,8 +20,7 @@
 				<view v-if="flexDirectionStart || horizontalLeft" class="uni-fab__item uni-fab__item--first" />
 				<view v-for="(item, index) in content" :key="index" :class="{ 'uni-fab__item--active': isShow }"
 					class="uni-fab__item" @click="_onItemClick(index, item)">
-					<image :src="item.active ? item.selectedIconPath : item.iconPath" class="uni-fab__item-image"
-						mode="aspectFit" />
+					<uni-icons custom-prefix="iconfont" :type="item.active ? item.selectedIcon : item.icon"></uni-icons>
 					<text class="uni-fab__item-text"
 						:style="{ color: item.active ? styles.selectedColor : styles.color }">{{ item.text }}</text>
 				</view>
@@ -470,12 +469,6 @@
 
 	.uni-fab__item--active {
 		opacity: 1;
-	}
-
-	.uni-fab__item-image {
-		width: 20px;
-		height: 20px;
-		margin-bottom: 4px;
 	}
 
 	.uni-fab__item-text {

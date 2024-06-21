@@ -4,6 +4,7 @@ const store_student = require("../../store/student.js");
 const store_lesson = require("../../store/lesson.js");
 const utils_constant = require("../../utils/constant.js");
 const utils_utils = require("../../utils/utils.js");
+var define_process_env_default = { baseUrl: "http://192.168.1.4:8992" };
 if (!Array) {
   const _easycom_uni_icons2 = common_vendor.resolveComponent("uni-icons");
   _easycom_uni_icons2();
@@ -47,11 +48,17 @@ const _sfc_main = {
       });
     };
     common_vendor.onLoad((params) => {
+      common_vendor.index.showLoading({
+        title: "加载中"
+      });
       common_vendor.index.request({
-        url: `http://localhost:8992/students/${params.studentId}`,
+        url: `${define_process_env_default.baseUrl}/students/${params.studentId}`,
         method: "GET",
         success: (res) => {
           student.setStudent(res.data.data);
+        },
+        complete: () => {
+          common_vendor.index.hideLoading();
         }
       });
     });

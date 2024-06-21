@@ -27,7 +27,7 @@
 }
 .datetime-picker__content.data-v-a98699ac {
   background: #fff;
-  height: 400rpx;
+  height: 600rpx;
   width: 100%;
 }
 .datetime-picker__header.data-v-a98699ac {

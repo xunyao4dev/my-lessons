@@ -4,11 +4,12 @@
 			:lunar="true" :start-date="'2000-1-1'" :end-date="'2099-12-31'" />
 		<uni-swipe-action>
 			<uni-swipe-action-item v-for="lesson in lessons" :key="lesson.id" :right-options="swipeOptions"
-				@click="swipeClick">
+				@click="swipeClick(lesson)" :disabled="lesson.status === 2">
 				<view class="course-info">
+					<image v-if="lesson.status === 2" src="@/static/cancelled.png" class="cancelled-stamp"></image>
 					<view class="course-content">
 						<view class="course-header">
-							<text class="course-title">{{ lesson.subject }}</text>
+							<text class="course-title">{{ formatSubject(lesson.subject) }}</text>
 							<text class="course-time">{{ lesson.time }}</text>
 						</view>
 						<view class="course-details">
@@ -18,7 +19,7 @@
 								<text class="value">{{ lesson.classroom }}</text>
 							</view>
 							<view class="course-detail-item">
-								<uni-icons type="person" size="16" color="#7f8c8d"></uni-icons>
+								<uni-icons custom-prefix="iconfont" type="icon-teacher" color="#7f8c8d"></uni-icons>
 								<text class="label">老师:</text>
 								<text class="value">{{ lesson.teacher }}</text>
 							</view>
@@ -67,11 +68,8 @@
 	import {
 		ref,
 		reactive,
-		onBeforeMount,
+		onBeforeMount
 	} from 'vue'
-	import {
-		onLoad
-	} from '@dcloudio/uni-app'
 	import {
 		useLessonStore
 	} from '../../store/lesson'
@@ -81,15 +79,15 @@
 	import {
 		subjectOptions
 	} from '../../utils/constant'
+	import {
+		formatSubject
+	} from '../../utils/utils'
 
 	const calRef = ref()
 	const form = ref()
-
 	const lesson = useLessonStore()
 	const student = useStudentStore()
-
 	const selected = ref([])
-
 	const lessons = ref([])
 
 	const swipeOptions = reactive([{
@@ -99,8 +97,16 @@
 		}
 	}])
 
-	const swipeClick = () => {
-		console.log(111)
+	const swipeClick = (lesson) => {
+		uni.showModal({
+			title: '确认取消？',
+			success: (res) => {
+				if (res.confirm) {
+					lesson.status = 2
+					updateLesson(lesson, '取消成功')
+				}
+			}
+		})
 	}
 
 	const newLesson = reactive({})
@@ -152,13 +158,16 @@
 		if (form.value) {
 			const valid = await form.value.validate()
 			if (valid) {
+				uni.showLoading({
+					title: '网络请求中'
+				})
 				uni.request({
-					url: `http://localhost:8992/students/${student.id}/lessons`,
+					url: `${process.env.baseUrl}/students/${student.id}/lessons`,
 					method: 'POST',
 					data: newLesson,
 					success: () => {
 						uni.showToast({
-							title: newLesson.id ? '修改成功' : '添加成功',
+							title: '添加成功',
 							icon: 'success'
 						})
 						setTimeout(() => {
@@ -166,6 +175,9 @@
 							calRef.value.init(newLesson.date)
 							calRef.value.change()
 						}, 1500)
+					},
+					complete: () => {
+						uni.hideLoading()
 					}
 				})
 			}
@@ -184,23 +196,13 @@
 	const monthSwitch = (params) => {
 		const {
 			year,
-			month,
-			date
+			month
 		} = params
 		loadData(`${year}-${String(month).padStart(2, '0')}`)
 	}
 
 	const handleTimeSelection = (time) => {
 		newLesson.time = time
-	}
-
-	const editLesson = (index) => {
-		const lesson = lessons[index]
-		newLesson.subject = lesson.subject
-		newLesson.classroom = lesson.classroom
-		newLesson.date = lesson.date
-		newLesson.time = lesson.time
-		openDialog()
 	}
 
 	const formatDate = (date) => {
@@ -216,9 +218,31 @@
 		return `${year}-${month}`
 	}
 
-	const loadData = (month, date) => {
+	const updateLesson = (lesson, title) => {
+		uni.showLoading({
+			title: '网络请求中'
+		})
 		uni.request({
-			url: `http://localhost:8992/students/${lesson.studentId}/schedule?month=${month}&date=${date}`,
+			url: `${process.env.baseUrl}/lessons/${lesson.id}`,
+			method: 'POST',
+			data: lesson,
+			success: () => {
+				uni.showToast({
+					title: title
+				})
+			},
+			complete: () => {
+				uni.hideLoading()
+			}
+		})
+	}
+
+	const loadData = (month, date) => {
+		uni.showLoading({
+			title: '加载中'
+		})
+		uni.request({
+			url: `${process.env.baseUrl}/students/${lesson.studentId}/lessons?month=${month}&date=${date}`,
 			method: 'GET',
 			success: (res) => {
 				const {
@@ -227,14 +251,20 @@
 				} = res.data.data
 				selected.value = dailySchedules.map(s => ({
 					date: s,
-					color: 'green',
-					icon: 'paperplane'
+					color: 'red',
+					icon: 'flag-filled'
 				}))
 				lessons.value = currentSchedules.map(l => ({
+					id: l.lessonId,
+					status: l.status,
 					subject: l.subject,
 					classroom: l.classroom,
+					teacher: l.teacher,
 					time: `${l.startTime}-${l.endTime}`
 				}))
+			},
+			complete: () => {
+				uni.hideLoading()
 			}
 		})
 	}
@@ -257,15 +287,25 @@
 		border-bottom: 1px solid #f0f0f0;
 	}
 
+	.cancelled-stamp {
+		position: absolute;
+		top: 40px;
+		right: 10px;
+		/* transform: rotate(45deg); */
+		z-index: 1;
+		height: 30px;
+		width: 60px;
+	}
+
 	.course-content {
-		padding: 5px 10px;
+		padding: 10px;
 	}
 
 	.course-header {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		margin-bottom: 3px;
+		margin-bottom: 5px;
 	}
 
 	.course-title {
@@ -282,7 +322,7 @@
 	.course-details {
 		display: flex;
 		flex-direction: column;
-		gap: 2px;
+		gap: 5px;
 		font-size: 14px;
 	}
 
@@ -307,7 +347,7 @@
 		margin: auto;
 	}
 
-	:deep(.uni-popup__wrapper) {
+	.uni-popup__wrapper {
 		width: 90%;
 	}
 

@@ -174,11 +174,15 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   }, $options.flexDirectionStart || $options.horizontalLeft ? {} : {}, {
     c: common_vendor.f($props.content, (item, index, i0) => {
       return {
-        a: item.active ? item.selectedIconPath : item.iconPath,
-        b: common_vendor.t(item.text),
-        c: item.active ? $data.styles.selectedColor : $data.styles.color,
-        d: index,
-        e: common_vendor.o(($event) => $options._onItemClick(index, item), index)
+        a: "4c2bf17c-0-" + i0,
+        b: common_vendor.p({
+          ["custom-prefix"]: "iconfont",
+          type: item.active ? item.selectedIcon : item.icon
+        }),
+        c: common_vendor.t(item.text),
+        d: item.active ? $data.styles.selectedColor : $data.styles.color,
+        e: index,
+        f: common_vendor.o(($event) => $options._onItemClick(index, item), index)
       };
     }),
     d: $data.isShow ? 1 : "",

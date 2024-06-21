@@ -126,11 +126,6 @@
 .uni-fab__item--active {
   opacity: 1;
 }
-.uni-fab__item-image {
-  width: 20px;
-  height: 20px;
-  margin-bottom: 4px;
-}
 .uni-fab__item-text {
   color: #FFFFFF;
   font-size: 12px;

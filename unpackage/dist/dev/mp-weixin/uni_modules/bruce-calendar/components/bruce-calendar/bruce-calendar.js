@@ -3,7 +3,9 @@ const uni_modules_bruceCalendar_components_bruceCalendar_util = require("./util.
 const common_vendor = require("../../../../common/vendor.js");
 const uni_modules_bruceCalendar_components_bruceCalendar_i18n_index = require("./i18n/index.js");
 const CalendarItem = () => "./uni-calendar-item.js";
-const { t } = common_vendor.initVueI18n(uni_modules_bruceCalendar_components_bruceCalendar_i18n_index.i18nMessages);
+const {
+  t
+} = common_vendor.initVueI18n(uni_modules_bruceCalendar_components_bruceCalendar_i18n_index.i18nMessages);
 const _sfc_main = {
   components: {
     CalendarItem
@@ -128,7 +130,10 @@ const _sfc_main = {
     bindDateChange(e) {
       const value = e.detail.value + "-1";
       this.setDate(value);
-      const { year, month } = this.cale.getDate(value);
+      const {
+        year,
+        month
+      } = this.cale.getDate(value);
       this.$emit("monthSwitch", {
         year,
         month
@@ -237,12 +242,9 @@ const _sfc_main = {
      * 回到今天
      */
     backToday() {
-      const nowYearMonth = `${this.nowDate.year}-${this.nowDate.month}`;
+      `${this.nowDate.year}-${this.nowDate.month}`;
       const date = this.cale.getDate(/* @__PURE__ */ new Date());
-      const todayYearMonth = `${date.year}-${date.month}`;
-      if (nowYearMonth !== todayYearMonth) {
-        this.monthSwitch();
-      }
+      `${date.year}-${date.month}`;
       this.init(date.fullDate);
       this.change();
     },

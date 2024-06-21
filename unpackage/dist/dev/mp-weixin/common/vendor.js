@@ -8610,13 +8610,13 @@ const globalStyle = {
 const tabBar = {
   list: [
     {
-      iconPath: "static/student0.png",
-      selectedIconPath: "static/student.png",
+      iconPath: "static/list.png",
+      selectedIconPath: "static/list.png",
       pagePath: "pages/index/index",
       text: "学生列表"
     },
     {
-      iconPath: "static/mine0.png",
+      iconPath: "static/mine.png",
       selectedIconPath: "static/mine.png",
       pagePath: "pages/mine/mine",
       text: "我的"

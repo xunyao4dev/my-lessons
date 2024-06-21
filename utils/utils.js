@@ -13,5 +13,9 @@ export function formatGrade(grade) {
 }
 
 export function formatSubject(subject) {
+	return subjectOptions.find(s => s.value === subject)?.text
+}
+
+export function formatSubjectAbbr(subject) {
 	return subjectOptions.find(s => s.value === subject)?.abbr
 }

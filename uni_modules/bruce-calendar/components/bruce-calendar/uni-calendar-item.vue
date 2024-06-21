@@ -10,7 +10,7 @@
 		<view class="uni-calendar-item__weeks-box-item">
 			<!-- <text v-if="selected&&weeks.extraInfo" :style="{backgroundColor: weeks.extraInfo.color || '#fa3534'}"
 				class="uni-calendar-item__weeks-box-circle"></text> -->
-				<uni-icons v-if="selected&&weeks.extraInfo" :color="weeks.extraInfo.color || '#fa3534'" :type="weeks.extraInfo.icon" size="15"></uni-icons>
+				<uni-icons custom-prefix="iconfont" v-if="selected&&weeks.extraInfo" :color="weeks.extraInfo.color || '#fa3534'" :type="weeks.extraInfo.icon" size="15"></uni-icons>
 			<text class="uni-calendar-item__weeks-box-text" :class="{
 				'uni-calendar-item--isDay-text': weeks.isDay,
 				'uni-calendar-item--isDay':calendar.fullDate === weeks.fullDate && weeks.isDay,

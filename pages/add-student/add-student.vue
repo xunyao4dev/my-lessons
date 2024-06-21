@@ -96,8 +96,11 @@
 		if (form.value) {
 			const valid = await form.value.validate()
 			if (valid) {
+				uni.showLoading({
+					title: '网络请求中'
+				})
 				uni.request({
-					url: 'http://localhost:8992/students',
+					url: `${process.env.baseUrl}/students`,
 					method: 'POST',
 					data: student,
 					success: () => {
@@ -109,6 +112,9 @@
 							studentStore.setStudent(student)
 							uni.navigateBack()
 						}, 1500)
+					},
+					complete: () => {
+						uni.hideLoading()
 					}
 				})
 			}

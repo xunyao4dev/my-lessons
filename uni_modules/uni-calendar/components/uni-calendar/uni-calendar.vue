@@ -326,9 +326,14 @@
 			backToday() {
 				const nowYearMonth = `${this.nowDate.year}-${this.nowDate.month}`
 				const date = this.cale.getDate(new Date())
-				const todayYearMonth = `${date.year}-${date.month}`
+        const todayYearMonth = `${date.year}-${date.month}`
 
 				this.init(date.fullDate)
+
+        if(nowYearMonth !== todayYearMonth) {
+          this.monthSwitch()
+        }
+
 				this.change()
 			},
 			/**

@@ -1,0 +1,1 @@
+"use strict";const e=require("../../common/vendor.js");if(!Array){e.resolveComponent("uni-calendar")()}Math;const t={__name:"mine",setup(t){const n=e.reactive([{date:"2024-06-30",info:"Red dot"}]);return e.onLoad((()=>{n.push({date:"2024-06-01",info:"Red dot"})})),(t,a)=>({a:e.p({selected:n,"start-date":"2019-03-02","end-date":"2029-05-20"})})}};wx.createPage(t);

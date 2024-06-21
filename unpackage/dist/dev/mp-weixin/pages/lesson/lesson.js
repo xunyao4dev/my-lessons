@@ -1,8 +1,11 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
+const common_assets = require("../../common/assets.js");
 const store_lesson = require("../../store/lesson.js");
 const store_student = require("../../store/student.js");
 const utils_constant = require("../../utils/constant.js");
+const utils_utils = require("../../utils/utils.js");
+var define_process_env_default = { baseUrl: "http://192.168.1.4:8992" };
 if (!Array) {
   const _easycom_bruce_calendar2 = common_vendor.resolveComponent("bruce-calendar");
   const _easycom_uni_icons2 = common_vendor.resolveComponent("uni-icons");
@@ -50,8 +53,16 @@ const _sfc_main = {
         backgroundColor: "#F56C6C"
       }
     }]);
-    const swipeClick = () => {
-      console.log(111);
+    const swipeClick = (lesson2) => {
+      common_vendor.index.showModal({
+        title: "确认取消？",
+        success: (res) => {
+          if (res.confirm) {
+            lesson2.status = 2;
+            updateLesson(lesson2, "取消成功");
+          }
+        }
+      });
     };
     const newLesson = common_vendor.reactive({});
     const rules = common_vendor.reactive({
@@ -97,13 +108,16 @@ const _sfc_main = {
       if (form.value) {
         const valid = await form.value.validate();
         if (valid) {
+          common_vendor.index.showLoading({
+            title: "网络请求中"
+          });
           common_vendor.index.request({
-            url: `http://localhost:8992/students/${student.id}/lessons`,
+            url: `${define_process_env_default.baseUrl}/students/${student.id}/lessons`,
             method: "POST",
             data: newLesson,
             success: () => {
               common_vendor.index.showToast({
-                title: newLesson.id ? "修改成功" : "添加成功",
+                title: "添加成功",
                 icon: "success"
               });
               setTimeout(() => {
@@ -111,6 +125,9 @@ const _sfc_main = {
                 calRef.value.init(newLesson.date);
                 calRef.value.change();
               }, 1500);
+            },
+            complete: () => {
+              common_vendor.index.hideLoading();
             }
           });
         }
@@ -127,8 +144,7 @@ const _sfc_main = {
     const monthSwitch = (params) => {
       const {
         year,
-        month,
-        date
+        month
       } = params;
       loadData(`${year}-${String(month).padStart(2, "0")}`);
     };
@@ -146,9 +162,30 @@ const _sfc_main = {
       const month = String(date.getMonth() + 1).padStart(2, "0");
       return `${year}-${month}`;
     };
-    const loadData = (month, date) => {
+    const updateLesson = (lesson2, title) => {
+      common_vendor.index.showLoading({
+        title: "网络请求中"
+      });
       common_vendor.index.request({
-        url: `http://localhost:8992/students/${lesson.studentId}/schedule?month=${month}&date=${date}`,
+        url: `${define_process_env_default.baseUrl}/lessons/${lesson2.id}`,
+        method: "POST",
+        data: lesson2,
+        success: () => {
+          common_vendor.index.showToast({
+            title
+          });
+        },
+        complete: () => {
+          common_vendor.index.hideLoading();
+        }
+      });
+    };
+    const loadData = (month, date) => {
+      common_vendor.index.showLoading({
+        title: "加载中"
+      });
+      common_vendor.index.request({
+        url: `${define_process_env_default.baseUrl}/students/${lesson.studentId}/lessons?month=${month}&date=${date}`,
         method: "GET",
         success: (res) => {
           const {
@@ -157,14 +194,20 @@ const _sfc_main = {
           } = res.data.data;
           selected.value = dailySchedules.map((s) => ({
             date: s,
-            color: "green",
-            icon: "paperplane"
+            color: "red",
+            icon: "flag-filled"
           }));
           lessons.value = currentSchedules.map((l) => ({
+            id: l.lessonId,
+            status: l.status,
             subject: l.subject,
             classroom: l.classroom,
+            teacher: l.teacher,
             time: `${l.startTime}-${l.endTime}`
           }));
+        },
+        complete: () => {
+          common_vendor.index.hideLoading();
         }
       });
     };
@@ -187,17 +230,25 @@ const _sfc_main = {
           ["end-date"]: "2099-12-31"
         }),
         e: common_vendor.f(lessons.value, (lesson2, k0, i0) => {
-          return {
-            a: common_vendor.t(lesson2.subject),
-            b: common_vendor.t(lesson2.time),
-            c: "d2ae5ec9-3-" + i0 + "," + ("d2ae5ec9-2-" + i0),
-            d: common_vendor.t(lesson2.classroom),
-            e: "d2ae5ec9-4-" + i0 + "," + ("d2ae5ec9-2-" + i0),
-            f: common_vendor.t(lesson2.teacher),
-            g: lesson2.id,
-            h: common_vendor.o(swipeClick, lesson2.id),
-            i: "d2ae5ec9-2-" + i0 + ",d2ae5ec9-1"
-          };
+          return common_vendor.e({
+            a: lesson2.status === 2
+          }, lesson2.status === 2 ? {
+            b: common_assets._imports_0
+          } : {}, {
+            c: common_vendor.t(common_vendor.unref(utils_utils.formatSubject)(lesson2.subject)),
+            d: common_vendor.t(lesson2.time),
+            e: "d2ae5ec9-3-" + i0 + "," + ("d2ae5ec9-2-" + i0),
+            f: common_vendor.t(lesson2.classroom),
+            g: "d2ae5ec9-4-" + i0 + "," + ("d2ae5ec9-2-" + i0),
+            h: common_vendor.t(lesson2.teacher),
+            i: lesson2.id,
+            j: common_vendor.o(($event) => swipeClick(lesson2), lesson2.id),
+            k: "d2ae5ec9-2-" + i0 + ",d2ae5ec9-1",
+            l: common_vendor.p({
+              ["right-options"]: swipeOptions,
+              disabled: lesson2.status === 2
+            })
+          });
         }),
         f: common_vendor.p({
           type: "home",
@@ -205,94 +256,91 @@ const _sfc_main = {
           color: "#7f8c8d"
         }),
         g: common_vendor.p({
-          type: "person",
-          size: "16",
+          ["custom-prefix"]: "iconfont",
+          type: "icon-teacher",
           color: "#7f8c8d"
         }),
-        h: common_vendor.p({
-          ["right-options"]: swipeOptions
-        }),
-        i: common_vendor.o(openDialog),
-        j: common_vendor.p({
+        h: common_vendor.o(openDialog),
+        i: common_vendor.p({
           horizontal: "right"
         }),
-        k: common_vendor.p({
+        j: common_vendor.p({
           ["show-icon"]: true,
           ["background-color"]: "#eee",
           color: "#888",
           text: "将为【" + common_vendor.unref(student).name + "】添加课程"
         }),
-        l: common_vendor.o(($event) => newLesson.subject = $event),
-        m: common_vendor.p({
+        k: common_vendor.o(($event) => newLesson.subject = $event),
+        l: common_vendor.p({
           localdata: common_vendor.unref(utils_constant.subjectOptions),
           placeholder: "请选择科目",
           modelValue: newLesson.subject
         }),
-        n: common_vendor.p({
+        m: common_vendor.p({
           label: "科目",
           ["label-width"]: "70",
           required: true,
           name: "subject"
         }),
-        o: common_vendor.o(($event) => newLesson.teacher = $event),
-        p: common_vendor.p({
+        n: common_vendor.o(($event) => newLesson.teacher = $event),
+        o: common_vendor.p({
           placeholder: "请输入教师",
           modelValue: newLesson.teacher
         }),
-        q: common_vendor.p({
+        p: common_vendor.p({
           label: "教师",
           ["label-width"]: "70",
           required: true,
           name: "teacher"
         }),
-        r: common_vendor.o(($event) => newLesson.classroom = $event),
-        s: common_vendor.p({
+        q: common_vendor.o(($event) => newLesson.classroom = $event),
+        r: common_vendor.p({
           placeholder: "请输入教室",
           modelValue: newLesson.classroom
         }),
-        t: common_vendor.p({
+        s: common_vendor.p({
           label: "教室",
           ["label-width"]: "70",
           required: true,
           name: "classroom"
         }),
-        v: common_vendor.o(($event) => newLesson.date = $event),
-        w: common_vendor.p({
+        t: common_vendor.o(($event) => newLesson.date = $event),
+        v: common_vendor.p({
           start: formatDate(/* @__PURE__ */ new Date()),
           type: "date",
           placeholder: "请选择日期",
           modelValue: newLesson.date
         }),
-        x: common_vendor.p({
+        w: common_vendor.p({
           label: "日期",
           ["label-width"]: "70",
           required: true,
           name: "date"
         }),
-        y: common_vendor.o(handleTimeSelection),
-        z: common_vendor.o(($event) => newLesson.time = $event),
-        A: common_vendor.p({
+        x: common_vendor.o(handleTimeSelection),
+        y: common_vendor.o(($event) => newLesson.time = $event),
+        z: common_vendor.p({
           modelValue: newLesson.time
         }),
-        B: common_vendor.p({
+        A: common_vendor.p({
           label: "时间",
           ["label-width"]: "70",
           required: true,
           name: "time"
         }),
-        C: common_vendor.sr(form, "d2ae5ec9-8,d2ae5ec9-6", {
+        B: common_vendor.sr(form, "d2ae5ec9-8,d2ae5ec9-6", {
           "k": "form"
         }),
-        D: common_vendor.p({
+        C: common_vendor.p({
           rules,
           model: newLesson
         }),
-        E: common_vendor.o(closeDialog),
-        F: common_vendor.o(addLesson),
-        G: common_vendor.sr(popup, "d2ae5ec9-6", {
+        D: common_vendor.o(closeDialog),
+        E: common_vendor.o(addLesson),
+        F: common_vendor.sr(popup, "d2ae5ec9-6", {
           "k": "popup"
         }),
-        H: common_vendor.p({
+        G: common_vendor.p({
           type: "center"
         })
       };

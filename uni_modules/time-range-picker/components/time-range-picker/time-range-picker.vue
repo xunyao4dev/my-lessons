@@ -2,10 +2,10 @@
 	<div class="datetime-picker">
 		<div class="datetime-picker__inputs">
 			<input type="text" placeholder="请选择开始时间" readonly class="datetime-picker__input" :value="formattedStartTime"
-				@click="show" />
+				@click="show" disabled/>
 			<span class="datetime-picker__separator">-</span>
 			<input type="text" placeholder="请选择结束时间" readonly class="datetime-picker__input" :value="formattedEndTime"
-				@click="show" />
+				@click="show" disabled/>
 		</div>
 
 		<uni-popup ref="popup" type="bottom" background-color="#fff">
@@ -149,7 +149,7 @@
 
 		&__content {
 			background: #fff;
-			height: 400rpx;
+			height: 600rpx;
 			width: 100%;
 		}
 
