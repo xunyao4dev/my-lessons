@@ -2,7 +2,7 @@
 	<view class="container">
 		<bruce-calendar ref="calRef" :selected="selected" @change="change" @monthSwitch="monthSwitch" :insert="true" :lunar="true" :start-date="'2000-1-1'" :end-date="'2099-12-31'" />
 		<uni-swipe-action>
-			<uni-swipe-action-item v-for="lesson in lessons" :key="lesson.id" :right-options="swipeOptions" @click="swipeClick(lesson)" :disabled="lesson.status === 2">
+			<uni-swipe-action-item v-for="lesson in lessons" :key="lesson.id" :right-options="swipeOptions" @click="swipeClick($event, lesson)" :disabled="lesson.status === 2">
 				<view class="course-info">
 					<image v-if="lesson.status === 2" src="@/static/cancelled.png" class="cancelled-stamp"></image>
 					<view class="course-content">
@@ -92,17 +92,28 @@
 		style: {
 			backgroundColor: '#F56C6C'
 		}
+	}, {
+		text: '完成',
+		style: {
+			backgroundColor: '#00f200'
+		}
 	} ] )
-	const swipeClick = ( lesson ) => {
-		uni.showModal( {
-			title: '确认取消？',
-			success: ( res ) => {
-				if ( res.confirm ) {
-					lesson.status = 2
-					updateLesson( lesson, '取消成功' )
+	const swipeClick = ( event, lesson ) => {
+		const {index} = event
+		if (index == 0) {
+			uni.showModal( {
+				title: '确认取消？',
+				success: ( res ) => {
+					if ( res.confirm ) {
+						lesson.status = 2
+						updateLesson( lesson, '取消成功' )
+					}
 				}
-			}
-		} )
+			} )
+		} else{
+			lesson.status = 1
+			updateLesson( lesson, '完成成功' )
+		}
 	}
 	const newLesson = reactive( {} )
 	const rules = reactive( {
@@ -162,6 +173,12 @@
 							calRef.value.init( newLesson.date )
 							calRef.value.change()
 						}, 1500 )
+					},
+					fail: ( err ) => {
+						uni.showToast( {
+							title: '网络异常',
+							icon: 'error'
+						} )
 					}
 				} )
 			}
@@ -204,6 +221,12 @@
 			success: () => {
 				uni.showToast( {
 					title: title
+				} )
+			},
+			fail: ( err ) => {
+				uni.showToast( {
+					title: '网络异常',
+					icon: 'error'
 				} )
 			}
 		} )

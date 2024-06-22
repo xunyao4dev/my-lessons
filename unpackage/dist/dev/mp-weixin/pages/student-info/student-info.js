@@ -5,7 +5,7 @@ const store_lesson = require("../../store/lesson.js");
 const utils_request = require("../../utils/request.js");
 const utils_constant = require("../../utils/constant.js");
 const utils_utils = require("../../utils/utils.js");
-var define_process_env_default = { baseUrl: "http://192.168.1.4:8992" };
+var define_process_env_default = { baseUrl: "http://localhost:8992" };
 if (!Array) {
   const _easycom_uni_icons2 = common_vendor.resolveComponent("uni-icons");
   _easycom_uni_icons2();
@@ -54,6 +54,12 @@ const _sfc_main = {
         method: "GET",
         success: (res) => {
           student.setStudent(res.data.data);
+        },
+        fail: (err) => {
+          common_vendor.index.showToast({
+            title: "网络异常",
+            icon: "error"
+          });
         }
       });
     });

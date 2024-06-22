@@ -111,6 +111,12 @@
 			method: 'GET',
 			success: ( res ) => {
 				student.setStudent( res.data.data )
+			},
+			fail: ( err ) => {
+				uni.showToast( {
+					title: '网络异常',
+					icon: 'error'
+				} )
 			}
 		} )
 	} )

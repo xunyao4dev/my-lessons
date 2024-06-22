@@ -6,7 +6,7 @@ const store_student = require("../../store/student.js");
 const utils_constant = require("../../utils/constant.js");
 const utils_utils = require("../../utils/utils.js");
 const utils_request = require("../../utils/request.js");
-var define_process_env_default = { baseUrl: "http://192.168.1.4:8992" };
+var define_process_env_default = { baseUrl: "http://localhost:8992" };
 if (!Array) {
   const _easycom_bruce_calendar2 = common_vendor.resolveComponent("bruce-calendar");
   const _easycom_uni_icons2 = common_vendor.resolveComponent("uni-icons");
@@ -53,17 +53,28 @@ const _sfc_main = {
       style: {
         backgroundColor: "#F56C6C"
       }
+    }, {
+      text: "完成",
+      style: {
+        backgroundColor: "#00f200"
+      }
     }]);
-    const swipeClick = (lesson2) => {
-      common_vendor.index.showModal({
-        title: "确认取消？",
-        success: (res) => {
-          if (res.confirm) {
-            lesson2.status = 2;
-            updateLesson(lesson2, "取消成功");
+    const swipeClick = (event, lesson2) => {
+      const { index } = event;
+      if (index == 0) {
+        common_vendor.index.showModal({
+          title: "确认取消？",
+          success: (res) => {
+            if (res.confirm) {
+              lesson2.status = 2;
+              updateLesson(lesson2, "取消成功");
+            }
           }
-        }
-      });
+        });
+      } else {
+        lesson2.status = 1;
+        updateLesson(lesson2, "完成成功");
+      }
     };
     const newLesson = common_vendor.reactive({});
     const rules = common_vendor.reactive({
@@ -123,6 +134,12 @@ const _sfc_main = {
                 calRef.value.init(newLesson.date);
                 calRef.value.change();
               }, 1500);
+            },
+            fail: (err) => {
+              common_vendor.index.showToast({
+                title: "网络异常",
+                icon: "error"
+              });
             }
           });
         }
@@ -165,6 +182,12 @@ const _sfc_main = {
         success: () => {
           common_vendor.index.showToast({
             title
+          });
+        },
+        fail: (err) => {
+          common_vendor.index.showToast({
+            title: "网络异常",
+            icon: "error"
           });
         }
       });
@@ -225,7 +248,7 @@ const _sfc_main = {
             g: "d2ae5ec9-4-" + i0 + "," + ("d2ae5ec9-2-" + i0),
             h: common_vendor.t(lesson2.teacher),
             i: lesson2.id,
-            j: common_vendor.o(($event) => swipeClick(lesson2), lesson2.id),
+            j: common_vendor.o(($event) => swipeClick($event, lesson2), lesson2.id),
             k: "d2ae5ec9-2-" + i0 + ",d2ae5ec9-1",
             l: common_vendor.p({
               ["right-options"]: swipeOptions,

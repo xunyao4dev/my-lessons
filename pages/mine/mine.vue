@@ -88,6 +88,12 @@
 				avatar.value = data.avatar
 				studentCount.value = data.studentCount
 				lessonCount.value = data.lessonCount
+			},
+			fail: ( err ) => {
+				uni.showToast( {
+					title: '网络异常',
+					icon: 'error'
+				} )
 			}
 		} )
 	} )

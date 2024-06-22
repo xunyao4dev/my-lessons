@@ -14,8 +14,10 @@ const request = (options) => {
   }
   common_vendor.index.showToast({
     title: "请求中...",
-    icon: "loading"
+    icon: "loading",
+    duration: 6e3
   });
+  options.timeout = 6e3;
   options.header = options.header || {};
   options.header["Authorization"] = "Bearer " + token;
   const originalSuccess = options.success;

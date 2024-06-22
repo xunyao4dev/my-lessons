@@ -1,6 +1,5 @@
 <template>
-	<view class="container">
-		<uni-search-bar radius="5" bg-color="#fff" placeholder="搜索学生" clearButton="auto" @confirm="search" />
+	<z-paging ref="paging" refresher-only @onRefresh="onRefresh">
 		<uni-list class="student-list" :border="false">
 			<view v-for="student in students" :key="student.id" class="student-item" @tap="navigateToStudent(student.id)">
 				<view class="left-column">
@@ -21,7 +20,7 @@
 			</view>
 		</uni-list>
 		<uni-fab :content="fabContent" horizontal="right" direction="vertical" @trigger="trigger" />
-	</view>
+	</z-paging>
 </template>
 
 <script setup>
@@ -44,6 +43,7 @@
 	import {
 		request
 	} from '../../utils/request'
+	const paging = ref()
 	const students = reactive( [] )
 	const fabContent = reactive( [ {
 		text: '添加学生',
@@ -64,18 +64,30 @@
 			} )
 		}
 	}
-	const search = ( content ) => {
-		console.log( content )
+	const onRefresh = () => {
+		loadData( () => {
+			paging.value.complete()
+		} )
 	}
-	onShow( () => {
+	const loadData = ( completeFun ) => {
 		request( {
 			url: `${process.env.baseUrl}/students`,
 			method: 'GET',
 			success: ( res ) => {
 				students.splice( 0, students.length )
 				students.push( ...res.data.data )
-			}
+			},
+			fail: ( err ) => {
+				uni.showToast( {
+					title: '网络异常',
+					icon: 'error'
+				} )
+			},
+			complete: completeFun
 		} )
+	}
+	onShow( () => {
+		loadData()
 	} )
 
 </script>

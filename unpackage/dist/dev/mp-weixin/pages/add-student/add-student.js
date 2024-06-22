@@ -3,7 +3,7 @@ const common_vendor = require("../../common/vendor.js");
 const store_student = require("../../store/student.js");
 const utils_constant = require("../../utils/constant.js");
 const utils_request = require("../../utils/request.js");
-var define_process_env_default = { baseUrl: "http://192.168.1.4:8992" };
+var define_process_env_default = { baseUrl: "http://localhost:8992" };
 if (!Array) {
   const _easycom_uni_easyinput2 = common_vendor.resolveComponent("uni-easyinput");
   const _easycom_uni_forms_item2 = common_vendor.resolveComponent("uni-forms-item");
@@ -81,6 +81,12 @@ const _sfc_main = {
                 studentStore.setStudent(student);
                 common_vendor.index.navigateBack();
               }, 1500);
+            },
+            fail: (err) => {
+              common_vendor.index.showToast({
+                title: "网络异常",
+                icon: "error"
+              });
             }
           });
         }

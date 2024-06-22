@@ -1,7 +1,7 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
 const utils_request = require("../../utils/request.js");
-var define_process_env_default = { baseUrl: "http://192.168.1.4:8992" };
+var define_process_env_default = { baseUrl: "http://localhost:8992" };
 if (!Array) {
   const _easycom_uni_list_item2 = common_vendor.resolveComponent("uni-list-item");
   const _easycom_uni_list2 = common_vendor.resolveComponent("uni-list");
@@ -52,11 +52,19 @@ const _sfc_main = {
         url: `${define_process_env_default.baseUrl}/users/mine`,
         method: "GET",
         success: (res) => {
-          const { data } = res.data;
+          const {
+            data
+          } = res.data;
           nickname.value = data.nickname;
           avatar.value = data.avatar;
           studentCount.value = data.studentCount;
           lessonCount.value = data.lessonCount;
+        },
+        fail: (err) => {
+          common_vendor.index.showToast({
+            title: "网络异常",
+            icon: "error"
+          });
         }
       });
     });

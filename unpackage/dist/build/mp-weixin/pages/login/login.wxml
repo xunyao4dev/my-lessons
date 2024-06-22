@@ -1,0 +1,1 @@
+<view class="container"><image class="logo" src="{{a}}" mode="aspectFit"></image><text class="title">亚琴学务</text><text class="slogan">您的教育管理助手</text><button open-type="getUserInfo" bindgetuserinfo="{{c}}" class="login-button"><uni-icons wx:if="{{b}}" u-i="177c842e-0" bind:__l="__l" u-p="{{b}}"></uni-icons><text class="button-text">微信用户一键登录</text></button></view>

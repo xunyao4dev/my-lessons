@@ -104,6 +104,12 @@
 							studentStore.setStudent( student )
 							uni.navigateBack()
 						}, 1500 )
+					},
+					fail: ( err ) => {
+						uni.showToast( {
+							title: '网络异常',
+							icon: 'error'
+						} )
 					}
 				} )
 			}

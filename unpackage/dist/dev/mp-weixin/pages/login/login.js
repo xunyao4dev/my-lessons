@@ -1,7 +1,7 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
 const common_assets = require("../../common/assets.js");
-var define_process_env_default = { baseUrl: "http://192.168.1.4:8992" };
+var define_process_env_default = { baseUrl: "http://localhost:8992" };
 if (!Array) {
   const _easycom_uni_icons2 = common_vendor.resolveComponent("uni-icons");
   _easycom_uni_icons2();
@@ -39,7 +39,9 @@ const _sfc_main = {
                 iv
               },
               success: (res) => {
-                const { data } = res.data;
+                const {
+                  data
+                } = res.data;
                 common_vendor.index.setStorageSync("token", data.token);
                 common_vendor.index.showToast({
                   title: "登录成功",
@@ -48,6 +50,12 @@ const _sfc_main = {
                       url: "/pages/index/index"
                     });
                   }
+                });
+              },
+              fail: (err) => {
+                common_vendor.index.showToast({
+                  title: "网络异常",
+                  icon: "error"
                 });
               }
             });

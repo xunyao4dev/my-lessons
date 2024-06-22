@@ -54,6 +54,12 @@
 									} )
 								}
 							} )
+						},
+						fail: ( err ) => {
+							uni.showToast( {
+								title: '网络异常',
+								icon: 'error'
+							} )
 						}
 					} )
 				}
