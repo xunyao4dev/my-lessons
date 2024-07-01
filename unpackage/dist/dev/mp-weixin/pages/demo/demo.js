@@ -1,67 +1,76 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
 if (!Array) {
-  const _easycom_uv_input2 = common_vendor.resolveComponent("uv-input");
-  const _easycom_uv_form_item2 = common_vendor.resolveComponent("uv-form-item");
-  const _easycom_uv_form2 = common_vendor.resolveComponent("uv-form");
-  const _easycom_uv_button2 = common_vendor.resolveComponent("uv-button");
-  (_easycom_uv_input2 + _easycom_uv_form_item2 + _easycom_uv_form2 + _easycom_uv_button2)();
+  const _easycom_uni_forms_item2 = common_vendor.resolveComponent("uni-forms-item");
+  const _easycom_test_union2 = common_vendor.resolveComponent("test-union");
+  const _easycom_uni_forms2 = common_vendor.resolveComponent("uni-forms");
+  (_easycom_uni_forms_item2 + _easycom_test_union2 + _easycom_uni_forms2)();
 }
-const _easycom_uv_input = () => "../../uni_modules/uv-input/components/uv-input/uv-input.js";
-const _easycom_uv_form_item = () => "../../uni_modules/uv-form/components/uv-form-item/uv-form-item.js";
-const _easycom_uv_form = () => "../../uni_modules/uv-form/components/uv-form/uv-form.js";
-const _easycom_uv_button = () => "../../uni_modules/uv-button/components/uv-button/uv-button.js";
+const _easycom_uni_forms_item = () => "../../uni_modules/uni-forms/components/uni-forms-item/uni-forms-item.js";
+const _easycom_test_union = () => "../../uni_modules/test-union/components/test-union/test-union.js";
+const _easycom_uni_forms = () => "../../uni_modules/uni-forms/components/uni-forms/uni-forms.js";
 if (!Math) {
-  (_easycom_uv_input + _easycom_uv_form_item + _easycom_uv_form + _easycom_uv_button)();
+  (_easycom_uni_forms_item + _easycom_test_union + _easycom_uni_forms)();
 }
 const _sfc_main = {
   __name: "demo",
   setup(__props) {
-    const formRef = common_vendor.ref();
+    const form = common_vendor.ref();
     const formData = common_vendor.ref({
-      mobile: ""
+      name: "",
+      details: {
+        age: 25,
+        address: "123 Main St"
+      }
     });
     const rules = common_vendor.ref({
-      mobile: [{
-        // 自定义验证函数，见上说明，注意这里面的逻辑不能出现语法报错，否则可能导致不验证
-        validator: (rule, value, callback) => {
-          return true;
-        },
-        message: "电话号码格式错误",
-        trigger: ["blur"]
-      }]
+      details: {
+        rules: [
+          {
+            required: true
+          },
+          {
+            validateFunction: (rule, value, data, callback) => {
+              if (!value || !value.age || !value.address) {
+                callback("Details are required");
+              } else {
+                callback();
+              }
+            }
+          }
+        ]
+      }
     });
-    const submit = () => {
-      formRef.value.validate().then((res) => {
-        common_vendor.index.showToast({
-          icon: "success",
-          title: "校验通过"
-        });
-      }).catch((errors) => {
-        common_vendor.index.showToast({
-          icon: "error",
-          title: "校验失败"
-        });
+    common_vendor.onReady(() => {
+      form.value.setRules(rules);
+    });
+    const submitForm = () => {
+      form.value.validate().then((res) => {
+        console.log("表单数据信息：", formData.value);
+      }).catch((err) => {
+        console.log("表单错误信息：", err);
       });
     };
     return (_ctx, _cache) => {
       return {
-        a: common_vendor.p({
-          model: formData.value.mobile,
-          placeholder: "请输入电话"
+        a: formData.value.name,
+        b: common_vendor.o(($event) => formData.value.name = $event.detail.value),
+        c: common_vendor.p({
+          label: "Name",
+          name: "name"
         }),
-        b: common_vendor.p({
-          label: "电话",
-          prop: "mobile"
+        d: common_vendor.o(($event) => formData.value.details = $event),
+        e: common_vendor.p({
+          details: formData.value.details
         }),
-        c: common_vendor.sr(formRef, "662d2c3a-0", {
-          "k": "formRef"
+        f: common_vendor.p({
+          label: "Details",
+          name: "details"
         }),
-        d: common_vendor.p({
-          rules: rules.value,
-          model: formData.value
-        }),
-        e: common_vendor.o(submit)
+        g: common_vendor.o(submitForm),
+        h: common_vendor.sr(form, "662d2c3a-0", {
+          "k": "form"
+        })
       };
     };
   }

@@ -1,9 +1,8 @@
 {
   "navigationBarTitleText": "",
   "usingComponents": {
-    "uv-input": "../../uni_modules/uv-input/components/uv-input/uv-input",
-    "uv-form-item": "../../uni_modules/uv-form/components/uv-form-item/uv-form-item",
-    "uv-form": "../../uni_modules/uv-form/components/uv-form/uv-form",
-    "uv-button": "../../uni_modules/uv-button/components/uv-button/uv-button"
+    "uni-forms-item": "../../uni_modules/uni-forms/components/uni-forms-item/uni-forms-item",
+    "test-union": "../../uni_modules/test-union/components/test-union/test-union",
+    "uni-forms": "../../uni_modules/uni-forms/components/uni-forms/uni-forms"
   }
 }

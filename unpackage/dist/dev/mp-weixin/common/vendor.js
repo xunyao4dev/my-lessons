@@ -8673,6 +8673,12 @@ const pages = [
     style: {
       navigationBarTitleText: ""
     }
+  },
+  {
+    path: "pages/demo/demo",
+    style: {
+      navigationBarTitleText: ""
+    }
   }
 ];
 const globalStyle = {
@@ -11460,4 +11466,6 @@ exports.s = s$1;
 exports.sr = sr;
 exports.t = t$1;
 exports.toRaw = toRaw;
+exports.toRefs = toRefs;
 exports.unref = unref;
+exports.watch = watch;

@@ -1,0 +1,1 @@
+<view><input bindinput="{{a}}" value="{{b}}"/><input bindinput="{{c}}" value="{{d}}"/></view>
