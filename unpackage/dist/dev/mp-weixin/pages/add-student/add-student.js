@@ -24,11 +24,26 @@ const _sfc_main = {
   __name: "add-student",
   setup(__props) {
     const studentStore = store_student.useStudentStore();
-    const student = common_vendor.reactive({});
+    const student = common_vendor.reactive({
+      name: "",
+      gender: "",
+      remainHours: {
+        hour1v1: "",
+        hour1v3: ""
+      },
+      grade: "",
+      subjects: [],
+      phone: "",
+      remark: ""
+    });
     const form = common_vendor.ref();
     const rules = common_vendor.reactive({
       name: {
         rules: [{
+          minLength: 2,
+          maxLength: 6,
+          errorMessage: "名字长度在{minLength}到{maxLength}之间"
+        }, {
           required: true,
           errorMessage: "姓名不能为空"
         }]
@@ -40,16 +55,18 @@ const _sfc_main = {
         }]
       },
       remainHours: {
-        rules: [
-          {
-            required: true,
-            errorMessage: "课时不能为空"
-          },
-          {
-            format: "number",
-            errorMessage: "课时只能输入数字"
+        rules: [{
+          validateFunction: function(rule, value, data, callback) {
+            console.log(data);
+            return true;
           }
-        ]
+        }]
+      },
+      grade: {
+        rules: [{
+          required: true,
+          errorMessage: "年级不能为空"
+        }]
       },
       subjects: {
         rules: [{
@@ -61,9 +78,18 @@ const _sfc_main = {
         rules: [{
           required: true,
           errorMessage: "手机号不能为空"
+        }, {
+          pattern: /^1((34[0-8])|(8\d{2})|(([35][0-35-9]|4[579]|66|7[35678]|9[1389])\d{1}))\d{7}$/,
+          errorMessage: "请输入有效的手机号"
         }]
       }
     });
+    const validateNumber = (e, field) => {
+      const number = e.replace(/\D/g, "");
+      common_vendor.nextTick$1(() => {
+        student[field] = number;
+      });
+    };
     const submit = async () => {
       if (form.value) {
         const valid = await form.value.validate();
@@ -81,17 +107,14 @@ const _sfc_main = {
                 studentStore.setStudent(student);
                 common_vendor.index.navigateBack();
               }, 1500);
-            },
-            fail: (err) => {
-              common_vendor.index.showToast({
-                title: "网络异常",
-                icon: "error"
-              });
             }
           });
         }
       }
     };
+    common_vendor.onReady(() => {
+      form.value.setRules(rules);
+    });
     common_vendor.onLoad((params) => {
       if (!params.studentId) {
         studentStore.reset();
@@ -103,11 +126,11 @@ const _sfc_main = {
         a: common_vendor.o(($event) => student.name = $event),
         b: common_vendor.p({
           placeholder: "请输入姓名",
+          trim: true,
           modelValue: student.name
         }),
         c: common_vendor.p({
           label: "姓名",
-          ["label-width"]: "70",
           required: true,
           name: "name"
         }),
@@ -119,79 +142,94 @@ const _sfc_main = {
         }),
         f: common_vendor.p({
           label: "性别",
-          ["label-width"]: "70",
           required: true,
           name: "gender"
         }),
-        g: common_vendor.o(($event) => student.remainHours = $event),
-        h: common_vendor.p({
-          type: "number",
-          placeholder: "请输入课时",
-          modelValue: student.remainHours
-        }),
+        g: common_vendor.o(($event) => validateNumber($event, "remainHours1v1")),
+        h: common_vendor.o(common_vendor.m(($event) => student.remainHours.hour1v1 = $event, {
+          lazy: true
+        }, true)),
         i: common_vendor.p({
+          type: "number",
+          placeholder: "1v1课时",
+          trim: true,
+          modelValue: student.remainHours.hour1v1
+        }),
+        j: common_vendor.o(($event) => validateNumber($event, "remainHours1v3")),
+        k: common_vendor.o(common_vendor.m(($event) => student.remainHours.hour1v3 = $event, {
+          lazy: true
+        }, true)),
+        l: common_vendor.p({
+          type: "number",
+          placeholder: "1v3课时",
+          trim: true,
+          modelValue: student.remainHours.hour1v3
+        }),
+        m: common_vendor.p({
           label: "课时",
-          ["label-width"]: "70",
           required: true,
           name: "remainHours"
         }),
-        j: common_vendor.o(($event) => student.grade = $event),
-        k: common_vendor.p({
+        n: common_vendor.o(($event) => student.grade = $event),
+        o: common_vendor.p({
           localdata: common_vendor.unref(utils_constant.gradeOptions),
           placeholder: "请选择年级",
           modelValue: student.grade
         }),
-        l: common_vendor.p({
+        p: common_vendor.p({
           label: "年级",
-          ["label-width"]: "70",
           required: true,
           name: "grade"
         }),
-        m: common_vendor.o(($event) => student.subjects = $event),
-        n: common_vendor.p({
+        q: common_vendor.o(($event) => student.subjects = $event),
+        r: common_vendor.p({
           mode: "tag",
           multiple: true,
           localdata: common_vendor.unref(utils_constant.subjectOptions),
           modelValue: student.subjects
         }),
-        o: common_vendor.p({
+        s: common_vendor.p({
           label: "科目",
-          ["label-width"]: "70",
           required: true,
           name: "subjects"
         }),
-        p: common_vendor.o(($event) => student.phone = $event),
-        q: common_vendor.p({
+        t: common_vendor.o(($event) => validateNumber($event, "phone")),
+        v: common_vendor.o(common_vendor.m(($event) => student.phone = $event, {
+          lazy: true
+        }, true)),
+        w: common_vendor.p({
+          type: "number",
           placeholder: "请输入联系方式",
+          trim: true,
           modelValue: student.phone
         }),
-        r: common_vendor.p({
+        x: common_vendor.p({
           label: "手机",
-          ["label-width"]: "70",
           required: true,
           name: "phone"
         }),
-        s: common_vendor.o(($event) => student.remark = $event),
-        t: common_vendor.p({
+        y: common_vendor.o(($event) => student.remark = $event),
+        z: common_vendor.p({
           type: "textarea",
           placeholder: "请输入备注信息",
+          trim: true,
           modelValue: student.remark
         }),
-        v: common_vendor.p({
+        A: common_vendor.p({
           label: "备注",
-          ["label-width"]: "70",
           name: "remark"
         }),
-        w: common_vendor.o(submit),
-        x: common_vendor.sr(form, "6539ff0c-0", {
+        B: common_vendor.o(submit),
+        C: common_vendor.sr(form, "a84615d2-0", {
           "k": "form"
         }),
-        y: common_vendor.p({
-          rules,
-          model: student
+        D: common_vendor.p({
+          model: student,
+          ["label-position"]: "right"
         })
       };
     };
   }
 };
-wx.createPage(_sfc_main);
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-a84615d2"]]);
+wx.createPage(MiniProgramPage);

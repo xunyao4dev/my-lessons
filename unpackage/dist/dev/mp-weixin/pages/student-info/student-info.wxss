@@ -1,12 +1,15 @@
 
-.container.data-v-495a661b {
-		padding: 20px;
+.page-container.data-v-495a661b {
+		padding: 20px 0;
 		background-color: #fff;
 		height: 100vh;
 }
 .student-card.data-v-495a661b {
 		height: 100vh;
 		background-color: #fff;
+}
+.info-section.data-v-495a661b {
+		margin-bottom: 20px;
 }
 .info-item.data-v-495a661b {
 		display: flex;
@@ -18,37 +21,41 @@
 .info-item.data-v-495a661b:last-child {
 		border-bottom: none;
 }
+.info-icon.data-v-495a661b {
+		font-size: 18px;
+		margin-right: 10px;
+}
 .label.data-v-495a661b {
-		margin-left: 3px;
-		width: 100px;
+		width: 60px;
 		color: #555;
 }
 .value.data-v-495a661b {
 		flex: 1;
 		word-break: break-word;
-		color: #888;
+}
+.clickable.data-v-495a661b {
+		color: #007bff;
+		cursor: pointer;
 }
 .button-group.data-v-495a661b {
 		display: flex;
 		justify-content: center;
-		/* 中心对齐 */
-		margin-top: 20px;
+		gap: 10px;
 }
-.edit-button.data-v-495a661b,
-	.lesson-button.data-v-495a661b {
+.custom-button.data-v-495a661b {
 		display: flex;
 		align-items: center;
+}
+.button-content.data-v-495a661b {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+}
+.button-icon.data-v-495a661b {
+		font-size: 18px;
+		margin-right: 5px;
+}
+.button-text.data-v-495a661b {
 		font-size: 14px;
-		color: #fff;
-		gap: 5px;
-}
-.edit-button.data-v-495a661b {
-		background-color: #d55a5e;
-}
-.lesson-button.data-v-495a661b {
-		background-color: #58e1fa;
-}
-.clickable.data-v-495a661b {
-		color: #007bff;
 }
 

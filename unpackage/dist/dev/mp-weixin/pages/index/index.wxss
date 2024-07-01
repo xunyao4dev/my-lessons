@@ -1,37 +1,19 @@
 
-.container.data-v-1cf27b2a {
-		display: flex;
-		flex-direction: column;
+.page-container.data-v-1cf27b2a {
+		padding: 10px;
+		background-color: #fafafa;
 		height: 100vh;
-		/* 让页面容器高度占据整个视口高度 */
-}
-.student-list.data-v-1cf27b2a {
-		display: flex;
-		flex-direction: column;
-		gap: 0;
-		/* 初始化gap以确保兼容性 */
-		padding: 0;
-		/* 移除任何可能存在的默认填充 */
-		flex: 1;
-		/* 让uni-list自适应填充剩余空间 */
-}
-.student-list.data-v-1cf27b2a::before,
-	.student-list.data-v-1cf27b2a::after {
-		content: "";
-		flex-basis: 3px;
-		background-color: #f0f0f0;
-}
-.student-item.data-v-1cf27b2a:last-child {
-		margin-bottom: 0;
 }
 .student-item.data-v-1cf27b2a {
+		background-color: #fff;
 		display: flex;
 		justify-content: space-between;
 		align-items: flex-start;
 		padding: 12px;
-		border-radius: 5px;
-		border: 1px solid #ddd;
-		margin-bottom: 3px;
+		border-bottom: 1px solid #ddd;
+}
+.student-item.data-v-1cf27b2a:first-child {
+		border-top: 1px solid #ddd;
 }
 .left-column.data-v-1cf27b2a {
 		flex-basis: 70%;

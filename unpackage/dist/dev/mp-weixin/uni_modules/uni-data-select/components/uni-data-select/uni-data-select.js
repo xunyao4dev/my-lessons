@@ -2,7 +2,7 @@
 const common_vendor = require("../../../../common/vendor.js");
 const _sfc_main = {
   name: "uni-data-select",
-  mixins: [common_vendor.zs.mixinDatacom || {}],
+  mixins: [common_vendor.Vs.mixinDatacom || {}],
   props: {
     localdata: {
       type: Array,

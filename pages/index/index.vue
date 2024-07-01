@@ -1,11 +1,12 @@
 <template>
-	<z-paging ref="paging" refresher-only @onRefresh="onRefresh">
-		<uni-list class="student-list" :border="false">
-			<view v-for="student in students" :key="student.id" class="student-item" @tap="navigateToStudent(student.id)">
+	<view class="page-container">
+		<z-paging ref="paging" v-model="students" @query="query" class="container" :paging-style="{'background-color': '#fafafa'}" :refresher-end-bounce-enabled="false" empty-view-text="您还没有学生哦~快去添加吧!">
+			<uni-search-bar v-model="searchQuery" @confirm="onSearch" @input="onInput" :placeholder="'请输入学生姓名'" />
+			<view v-for="(student, index) in filteredStudents" :key="index" class="student-item" @tap="navigateToStudent(student.id)">
 				<view class="left-column">
 					<view class="header">
 						<uni-icons custom-prefix="iconfont" :type="student.gender === 0 ? 'icon-male' : 'icon-female'" class="gender-icon"></uni-icons>
-						<text class="name">{{student.name}}</text>
+						<text class="name">{{ student.name }}</text>
 						<text class="student-grade">{{ formatGrade(student.grade) }}</text>
 					</view>
 					<view class="subjects">
@@ -13,122 +14,124 @@
 					</view>
 				</view>
 				<view class="right-column">
-					<view class="enrollment-time">{{student.createTime}}</view>
-					<view class="remaining-hours">剩余课时:<uni-badge text-color="#fff" :text="student.remainHours" />
+					<view class="enrollment-time">{{ student.createTime }}</view>
+					<view class="remaining-hours">
+						剩余课时:<uni-badge text-color="#fff" :text="student.remainHours" />
 					</view>
 				</view>
 			</view>
-		</uni-list>
-		<uni-fab :content="fabContent" horizontal="right" direction="vertical" @trigger="trigger" />
-	</z-paging>
+			<uni-fab ref="fab" :content="fabContent" horizontal="right" direction="vertical" @trigger="trigger" />
+		</z-paging>
+	</view>
 </template>
 
 <script setup>
 	import {
-		onMounted,
-		reactive,
-		ref
+		ref,
 	} from 'vue'
 	import {
 		onShow
 	} from '@dcloudio/uni-app'
 	import {
-		subjectOptions,
-		gradeOptions
-	} from '../../utils/constant'
-	import {
 		formatGrade,
 		formatSubjectAbbr
-	} from '../../utils/utils'
+	} from '../../utils/utils';
 	import {
 		request
-	} from '../../utils/request'
-	const paging = ref()
-	const students = reactive( [] )
-	const fabContent = reactive( [ {
+	} from '../../utils/request';
+	const students = ref( [] );
+	const filteredStudents = ref( [] );
+	const searchQuery = ref( '' );
+	const fab = ref();
+	const paging = ref();
+	const fabContent = ref( [ {
 		text: '添加学生',
 		icon: 'icon-add-student',
-		selectedIcon: 'icon-add-student'
-	} ] )
-	const navigateToStudent = ( id ) => {
-		uni.navigateTo( {
-			url: `/pages/student-info/student-info?studentId=${id}`,
-			animationType: 'pop-in',
-			animationDuration: 200
-		} )
-	}
-	const trigger = ( e ) => {
-		if ( e.index === 0 ) {
-			uni.navigateTo( {
-				url: "/pages/add-student/add-student"
-			} )
-		}
-	}
-	const onRefresh = () => {
-		loadData( () => {
-			paging.value.complete()
-		} )
-	}
-	const loadData = ( completeFun ) => {
+		selectedIcon: 'icon-add-student',
+	},{
+		text: '测试',
+		icon: 'icon-add-student',
+		selectedIcon: 'icon-add-student',
+	}, ] );
+	const query = () => {
 		request( {
 			url: `${process.env.baseUrl}/students`,
 			method: 'GET',
 			success: ( res ) => {
-				students.splice( 0, students.length )
-				students.push( ...res.data.data )
+				students.value = res.data.data;
+				filteredStudents.value = students.value;
+				paging.value.complete( res.data.data );
 			},
 			fail: ( err ) => {
 				uni.showToast( {
 					title: '网络异常',
-					icon: 'error'
-				} )
+					icon: 'error',
+				} );
+				paging.value.complete( false );
 			},
-			complete: completeFun
-		} )
-	}
+		} );
+	};
+	const onSearch = () => {
+		filterStudents();
+	};
+	const onInput = ( value ) => {
+		searchQuery.value = value;
+		filterStudents();
+	};
+	const filterStudents = () => {
+		if ( searchQuery.value ) {
+			filteredStudents.value = students.value.filter( ( student ) =>
+				student.name.includes( searchQuery.value )
+			);
+		} else {
+			filteredStudents.value = students.value;
+		}
+	};
+	const navigateToStudent = ( id ) => {
+		uni.navigateTo( {
+			url: `/pages/student-info/student-info?studentId=${id}`,
+			animationType: 'pop-in',
+			animationDuration: 200,
+		} );
+	};
+	const trigger = ( e ) => {
+		if ( e.index === 0 ) {
+			uni.navigateTo( {
+				url: '/pages/add-student/add-student',
+			} );
+		} else {
+			uni.navigateTo( {
+				url: '/pages/demo/demo',
+			} );
+		}
+		fab.value.close();
+	};
 	onShow( () => {
-		loadData()
-	} )
+		if ( paging.value ) {
+			paging.value.reload();
+		}
+	} );
 
 </script>
+
 <style scoped>
-	.container {
-		display: flex;
-		flex-direction: column;
+	.page-container {
+		padding: 10px;
+		background-color: #fafafa;
 		height: 100vh;
-		/* 让页面容器高度占据整个视口高度 */
-	}
-
-	.student-list {
-		display: flex;
-		flex-direction: column;
-		gap: 0;
-		/* 初始化gap以确保兼容性 */
-		padding: 0;
-		/* 移除任何可能存在的默认填充 */
-		flex: 1;
-		/* 让uni-list自适应填充剩余空间 */
-	}
-
-	.student-list::before,
-	.student-list::after {
-		content: "";
-		flex-basis: 3px;
-		background-color: #f0f0f0;
-	}
-
-	.student-item:last-child {
-		margin-bottom: 0;
 	}
 
 	.student-item {
+		background-color: #fff;
 		display: flex;
 		justify-content: space-between;
 		align-items: flex-start;
 		padding: 12px;
-		border-radius: 5px;
-		border: 1px solid #ddd;
-		margin-bottom: 3px;
+		border-bottom: 1px solid #ddd;
+	}
+
+	.student-item:first-child {
+		border-top: 1px solid #ddd;
 	}
 
 	.left-column {

@@ -1,0 +1,42 @@
+
+.about-page.data-v-13a78ac6 {
+		padding: 20px;
+		background-color: #fff;
+		height: 100vh;
+}
+.header.data-v-13a78ac6 {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		margin-bottom: 20px;
+}
+.logo.data-v-13a78ac6 {
+		width: 100px;
+		height: 100px;
+		margin-bottom: 10px;
+}
+.app-name.data-v-13a78ac6 {
+		font-size: 24px;
+		font-weight: bold;
+		color: #333;
+}
+.content.data-v-13a78ac6 {
+		padding: 20px;
+		background-color: #f9f9f9;
+		border-radius: 10px;
+}
+.section.data-v-13a78ac6 {
+		margin-bottom: 20px;
+}
+.title.data-v-13a78ac6 {
+		font-size: 20px;
+		font-weight: bold;
+		color: #555;
+		margin-bottom: 10px;
+}
+.description.data-v-13a78ac6 {
+		font-size: 16px;
+		color: #666;
+		line-height: 1.5;
+}
+

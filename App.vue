@@ -4,7 +4,7 @@
 			const token = uni.getStorageSync( 'token' )
 			if ( token ) {
 				uni.reLaunch( {
-					url: '/pages/index/index'
+					url: 'pages/index/index'
 				} )
 			} else {
 				uni.reLaunch( {

@@ -22,7 +22,6 @@
 
 		<!-- 功能列表部分 -->
 		<uni-list class="actions">
-			<uni-list-item title="绑定手机" clickable @click="bindPhone" showArrow :showExtraIcon="true" :extraIcon="{color: '#4cd964',size: '22',type: 'phone'}"></uni-list-item>
 			<uni-list-item title="意见建议" clickable @click="suggestions" showArrow :showExtraIcon="true" :extraIcon="{color: '#4cd964',size: '22',type: 'help'}"></uni-list-item>
 			<uni-list-item title="关于" clickable @click="about" showArrow :showExtraIcon="true" :extraIcon="{color: '#4cd964',size: '22',type: 'link'}"></uni-list-item>
 		</uni-list>
@@ -48,23 +47,16 @@
 	const avatar = ref()
 	const studentCount = ref( 0 )
 	const lessonCount = ref( 0 )
-	const bindPhone = () => {
-		uni.showToast( {
-			icon: 'error',
-			title: '暂不支持'
-		} )
-	}
+	
 	const about = () => {
-		uni.showToast( {
-			icon: 'error',
-			title: '暂不支持'
-		} )
+		uni.navigateTo({
+			url: '/pages/about/about'
+		})
 	}
 	const suggestions = () => {
-		uni.showToast( {
-			icon: 'error',
-			title: '暂不支持'
-		} )
+		uni.navigateTo({
+			url: '/pages/suggestion/suggestion'
+		})
 	}
 	const logout = () => {
 		uni.showToast( {

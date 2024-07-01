@@ -19,22 +19,14 @@ const _sfc_main = {
     const avatar = common_vendor.ref();
     const studentCount = common_vendor.ref(0);
     const lessonCount = common_vendor.ref(0);
-    const bindPhone = () => {
-      common_vendor.index.showToast({
-        icon: "error",
-        title: "暂不支持"
-      });
-    };
     const about = () => {
-      common_vendor.index.showToast({
-        icon: "error",
-        title: "暂不支持"
+      common_vendor.index.navigateTo({
+        url: "/pages/about/about"
       });
     };
     const suggestions = () => {
-      common_vendor.index.showToast({
-        icon: "error",
-        title: "暂不支持"
+      common_vendor.index.navigateTo({
+        url: "/pages/suggestion/suggestion"
       });
     };
     const logout = () => {
@@ -73,20 +65,8 @@ const _sfc_main = {
         a: common_vendor.t(nickname.value),
         b: common_vendor.t(studentCount.value),
         c: common_vendor.t(lessonCount.value),
-        d: common_vendor.o(bindPhone),
+        d: common_vendor.o(suggestions),
         e: common_vendor.p({
-          title: "绑定手机",
-          clickable: true,
-          showArrow: true,
-          showExtraIcon: true,
-          extraIcon: {
-            color: "#4cd964",
-            size: "22",
-            type: "phone"
-          }
-        }),
-        f: common_vendor.o(suggestions),
-        g: common_vendor.p({
           title: "意见建议",
           clickable: true,
           showArrow: true,
@@ -97,8 +77,8 @@ const _sfc_main = {
             type: "help"
           }
         }),
-        h: common_vendor.o(about),
-        i: common_vendor.p({
+        f: common_vendor.o(about),
+        g: common_vendor.p({
           title: "关于",
           clickable: true,
           showArrow: true,
@@ -109,7 +89,7 @@ const _sfc_main = {
             type: "link"
           }
         }),
-        j: common_vendor.o(logout)
+        h: common_vendor.o(logout)
       };
     };
   }

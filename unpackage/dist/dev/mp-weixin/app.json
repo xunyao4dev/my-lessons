@@ -5,7 +5,9 @@
     "pages/mine/mine",
     "pages/add-student/add-student",
     "pages/student-info/student-info",
-    "pages/lesson/lesson"
+    "pages/lesson/lesson",
+    "pages/suggestion/suggestion",
+    "pages/about/about"
   ],
   "window": {
     "navigationBarTextStyle": "black",

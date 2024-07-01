@@ -8,13 +8,15 @@ if (!Math) {
   "./pages/add-student/add-student.js";
   "./pages/student-info/student-info.js";
   "./pages/lesson/lesson.js";
+  "./pages/suggestion/suggestion.js";
+  "./pages/about/about.js";
 }
 const _sfc_main = {
   onLaunch: function() {
     const token = common_vendor.index.getStorageSync("token");
     if (token) {
       common_vendor.index.reLaunch({
-        url: "/pages/index/index"
+        url: "pages/index/index"
       });
     } else {
       common_vendor.index.reLaunch({

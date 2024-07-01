@@ -1,7 +1,30 @@
 
-.container {
+.container.data-v-a84615d2 {
 		font-size: 14px;
 		line-height: 24px;
 		padding: 20px;
+		background-color: #fff;
+		height: 100vh;
+}
+.uni-forms-item__label.data-v-a84615d2 {
+		width: 50px !important;
+}
+.data-v-a84615d2 .uni-data-checklist .checklist-group .checklist-box.is--tag {
+		background-color: #fff;
+}
+.input-container.data-v-a84615d2 {
+		display: flex;
+		flex-direction: row;
+		gap: 10px;
+}
+.unit.data-v-a84615d2 {
+		display: block;
+		padding: 0 10px;
+		color: #777;
+		font-weight: bold;
+		font-size: 14px;
+		height: 35px;
+		line-height: 35px;
+		background-color: #e6e6e6;
 }
 

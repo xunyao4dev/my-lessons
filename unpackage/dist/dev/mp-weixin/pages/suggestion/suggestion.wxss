@@ -1,0 +1,22 @@
+
+.container.data-v-ab9b9b5a {
+		padding: 20px;
+		height: 100vh;
+		background-color: #fff;
+}
+.container .input.data-v-ab9b9b5a {
+		margin-bottom: 20px;
+}
+.submit-btn.data-v-ab9b9b5a {
+		width: 100%;
+		margin-top: 20px;
+		background-color: #007AFF;
+		/* Change color as needed */
+		color: #fff;
+		border: none;
+		padding: 10px;
+		border-radius: 5px;
+		font-size: 16px;
+		cursor: pointer;
+}
+

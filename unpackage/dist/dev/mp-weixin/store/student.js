@@ -17,6 +17,9 @@ const useStudentStore = common_vendor.defineStore("student", {
     setStudent(student) {
       Object.assign(this, student);
     },
+    deductHours() {
+      this.remainHours = this.remainHours - 1;
+    },
     reset() {
       this.setStudent({
         id: void 0,

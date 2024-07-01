@@ -2,50 +2,24 @@
 	<view class="page-container">
 		<view class="student-card">
 			<view class="info-section">
-				<view class="info-item">
-					<uni-icons custom-prefix="iconfont" type="icon-ming"></uni-icons>
-					<text class="label">姓名</text>
-					<text class="value">{{ student.name }}</text>
-				</view>
-				<view class="info-item">
-					<uni-icons custom-prefix="iconfont" type="icon-gender"></uni-icons>
-					<text class="label">性别</text>
-					<text class="value">{{ genderText }}</text>
-				</view>
-				<view class="info-item">
-					<uni-icons custom-prefix="iconfont" type="icon-nianji"></uni-icons>
-					<text class="label">年级</text>
-					<text class="value">{{ formatGrade(student.grade) }}</text>
-				</view>
-				<view class="info-item">
-					<uni-icons custom-prefix="iconfont" type="icon-keshi"></uni-icons>
-					<text class="label">课时</text>
-					<text class="value">{{ student.remainHours }}</text>
-				</view>
-				<view class="info-item">
-					<uni-icons custom-prefix="iconfont" type="icon-kemu"></uni-icons>
-					<text class="label">科目</text>
-					<text class="value">{{ subjectsText }}</text>
-				</view>
-				<view class="info-item">
-					<uni-icons custom-prefix="iconfont" type="icon-shouji"></uni-icons>
-					<text class="label">手机</text>
-					<text class="value clickable" @click="makeCall(student.phone)">
-						{{ student.phone }}
-					</text>
-				</view>
-				<view class="info-item">
-					<uni-icons custom-prefix="iconfont" type="icon-beizhu"></uni-icons>
-					<text class="label">备注</text>
-					<text class="value">{{ student.remark }}</text>
+				<view class="info-item" v-for="(info, index) in infoList" :key="index" :class="[{ 'clickable': info.clickable }]" @click="info.clickable ? info.clickAction() : null">
+					<uni-icons custom-prefix="iconfont" :type="info.iconType" class="info-icon"></uni-icons>
+					<text class="label">{{ info.label }}</text>
+					<text class="value">{{ info.value }}</text>
 				</view>
 			</view>
 			<view class="button-group">
-				<button class="edit-button" @click="editInfo(student.id)">
-					<uni-icons custom-prefix="iconfont" type="icon-bianji"></uni-icons> 编辑
+				<button type="default" @click="editInfo(student.id)" size="mini" class="custom-button">
+					<view class="button-content">
+						<uni-icons custom-prefix="iconfont" type="icon-bianji" class="button-icon"></uni-icons>
+						<text class="button-text">编辑</text>
+					</view>
 				</button>
-				<button class="lesson-button" @click="lessonInfo">
-					<uni-icons custom-prefix="iconfont" type="icon-paikebiao"></uni-icons> 上课
+				<button type="primary" @click="lessonInfo" size="mini" class="custom-button">
+					<view class="button-content">
+						<uni-icons custom-prefix="iconfont" type="icon-paikebiao" class="button-icon"></uni-icons>
+						<text class="button-text">上课</text>
+					</view>
 				</button>
 			</view>
 		</view>
@@ -55,76 +29,104 @@
 <script setup>
 	import {
 		ref,
-		computed,
-		reactive
-	} from 'vue'
+		computed
+	} from 'vue';
 	import {
 		onLoad
-	} from '@dcloudio/uni-app'
+	} from '@dcloudio/uni-app';
 	import {
 		useStudentStore
-	} from '@/store/student'
+	} from '@/store/student';
 	import {
 		useLessonStore
-	} from '../../store/lesson'
+	} from '../../store/lesson';
 	import {
 		request
-	} from '../../utils/request'
-	const student = useStudentStore()
-	const lesson = useLessonStore()
+	} from '../../utils/request';
 	import {
 		subjectOptions,
-		genderOptions,
-		gradeOptions
-	} from '../../utils/constant'
+		genderOptions
+	} from '../../utils/constant';
 	import {
 		formatGrade
-	} from '../../utils/utils'
+	} from '../../utils/utils';
+	const student = useStudentStore();
+	const lesson = useLessonStore();
 	const makeCall = ( phone ) => {
 		uni.makePhoneCall( {
 			phoneNumber: phone,
 			fail: ( err ) => {
-				console.error( err )
+				console.error( err );
 			}
-		} )
-	}
-	const genderText = computed( () => genderOptions.find( i => i.value === student.gender )?.text )
+		} );
+	};
+	const genderText = computed( () => genderOptions.find( i => i.value === student.gender )?.text );
 	const subjectsText = computed( () => {
-		return student.subjects
-			.map( subject => subjectOptions.find( i => subject === i.value )?.text )
-			.join( ', ' )
-	} )
+		return student.subjects.map( subject => subjectOptions.find( i => subject === i.value )?.text ).join( ', ' );
+	} );
+	const infoList = computed( () => [ {
+			iconType: 'icon-ming',
+			label: '姓名',
+			value: student.name
+		},
+		{
+			iconType: 'icon-gender',
+			label: '性别',
+			value: genderText.value
+		},
+		{
+			iconType: 'icon-nianji',
+			label: '年级',
+			value: formatGrade( student.grade )
+		},
+		{
+			iconType: 'icon-keshi',
+			label: '课时',
+			value: student.remainHours
+		},
+		{
+			iconType: 'icon-kemu',
+			label: '科目',
+			value: subjectsText.value
+		},
+		{
+			iconType: 'icon-shouji',
+			label: '手机',
+			value: student.phone,
+			clickable: true,
+			clickAction: () => makeCall( student.phone )
+		},
+		{
+			iconType: 'icon-beizhu',
+			label: '备注',
+			value: student.remark
+		}
+	] );
 	const editInfo = ( studentId ) => {
 		uni.navigateTo( {
 			url: `/pages/add-student/add-student?studentId=${studentId}`
-		} )
-	}
+		} );
+	};
 	const lessonInfo = () => {
-		lesson.setStudentId( student.id )
 		uni.navigateTo( {
 			url: '/pages/lesson/lesson'
-		} )
-	}
+		} );
+	};
 	onLoad( ( params ) => {
 		request( {
 			url: `${process.env.baseUrl}/students/${params.studentId}`,
 			method: 'GET',
 			success: ( res ) => {
 				student.setStudent( res.data.data )
-			},
-			fail: ( err ) => {
-				uni.showToast( {
-					title: '网络异常',
-					icon: 'error'
-				} )
 			}
-		} )
-	} )
+		} );
+	} );
 
 </script>
+
 <style scoped>
-	.container {
-		padding: 20px;
+	.page-container {
+		padding: 20px 0;
 		background-color: #fff;
 		height: 100vh;
 	}
@@ -132,6 +134,10 @@
 	.student-card {
 		height: 100vh;
 		background-color: #fff;
+	}
+
+	.info-section {
+		margin-bottom: 20px;
 	}
 
 	.info-item {
@@ -146,44 +152,50 @@
 		border-bottom: none;
 	}
 
+	.info-icon {
+		font-size: 18px;
+		margin-right: 10px;
+	}
+
 	.label {
-		margin-left: 3px;
-		width: 100px;
+		width: 60px;
 		color: #555;
 	}
 
 	.value {
 		flex: 1;
 		word-break: break-word;
-		color: #888;
+	}
+
+	.clickable {
+		color: #007bff;
+		cursor: pointer;
 	}
 
 	.button-group {
 		display: flex;
 		justify-content: center;
-		/* 中心对齐 */
-		margin-top: 20px;
+		gap: 10px;
 	}
 
-	.edit-button,
-	.lesson-button {
+	.custom-button {
 		display: flex;
 		align-items: center;
+	}
+
+	.button-content {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.button-icon {
+		font-size: 18px;
+		margin-right: 5px;
+	}
+
+	.button-text {
 		font-size: 14px;
-		color: #fff;
-		gap: 5px;
-	}
-
-	.edit-button {
-		background-color: #d55a5e;
-	}
-
-	.lesson-button {
-		background-color: #58e1fa;
-	}
-
-	.clickable {
-		color: #007bff;
 	}
 
 </style>

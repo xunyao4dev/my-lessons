@@ -1,6 +1,5 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
-const common_assets = require("../../common/assets.js");
 const store_lesson = require("../../store/lesson.js");
 const store_student = require("../../store/student.js");
 const utils_constant = require("../../utils/constant.js");
@@ -44,7 +43,8 @@ const _sfc_main = {
   setup(__props) {
     const calRef = common_vendor.ref();
     const form = common_vendor.ref();
-    const lesson = store_lesson.useLessonStore();
+    const swipeRef = common_vendor.ref();
+    store_lesson.useLessonStore();
     const student = store_student.useStudentStore();
     const selected = common_vendor.ref([]);
     const lessons = common_vendor.ref([]);
@@ -60,7 +60,9 @@ const _sfc_main = {
       }
     }]);
     const swipeClick = (event, lesson2) => {
-      const { index } = event;
+      const {
+        index
+      } = event;
       if (index == 0) {
         common_vendor.index.showModal({
           title: "确认取消？",
@@ -75,6 +77,7 @@ const _sfc_main = {
         lesson2.status = 1;
         updateLesson(lesson2, "完成成功");
       }
+      swipeRef.value.closeAll();
     };
     const newLesson = common_vendor.reactive({});
     const rules = common_vendor.reactive({
@@ -110,8 +113,29 @@ const _sfc_main = {
       }
     });
     const popup = common_vendor.ref();
+    const studentSubjectOptions = common_vendor.computed(() => utils_constant.subjectOptions.filter((s) => student.subjects.includes(s.value)));
     const openDialog = () => {
       popup.value.open();
+    };
+    const statusText = (status) => {
+      switch (status) {
+        case 0:
+          return "待上课";
+        case 1:
+          return "已上课";
+        case 2:
+          return "已取消";
+      }
+    };
+    const statusClass = (status) => {
+      switch (status) {
+        case 0:
+          return "is-init";
+        case 1:
+          return "is-approved";
+        case 2:
+          return "is-draft";
+      }
     };
     const closeDialog = () => {
       popup.value.close();
@@ -120,26 +144,33 @@ const _sfc_main = {
       if (form.value) {
         const valid = await form.value.validate();
         if (valid) {
-          utils_request.request({
-            url: `${define_process_env_default.baseUrl}/students/${student.id}/lessons`,
-            method: "POST",
-            data: newLesson,
-            success: () => {
-              common_vendor.index.showToast({
-                title: "添加成功",
-                icon: "success"
-              });
-              setTimeout(() => {
-                closeDialog();
-                calRef.value.init(newLesson.date);
-                calRef.value.change();
-              }, 1500);
-            },
-            fail: (err) => {
-              common_vendor.index.showToast({
-                title: "网络异常",
-                icon: "error"
-              });
+          common_vendor.index.requestSubscribeMessage({
+            tmplIds: ["UO10oiJFF9vEhkty7lvT7Q0DY2jXF4QdNn8WqHlVrdI", "0A6-dgr7vyyrZdprmGcFEwxjpNj9vPuvRDVxw5tYI6A"],
+            success: (res) => {
+              console.log(res);
+              if (res["UO10oiJFF9vEhkty7lvT7Q0DY2jXF4QdNn8WqHlVrdI"] === "accept" || res["0A6-dgr7vyyrZdprmGcFEwxjpNj9vPuvRDVxw5tYI6A"] === "accept") {
+                utils_request.request({
+                  url: `${define_process_env_default.baseUrl}/students/${student.id}/lessons`,
+                  method: "POST",
+                  data: newLesson,
+                  success: () => {
+                    common_vendor.index.showToast({
+                      title: "添加成功",
+                      icon: "success"
+                    });
+                    setTimeout(() => {
+                      closeDialog();
+                      calRef.value.init(newLesson.date);
+                      calRef.value.change();
+                    }, 1500);
+                  }
+                });
+              } else {
+                common_vendor.index.showToast({
+                  title: "请允许订阅通知",
+                  icon: "error"
+                });
+              }
             }
           });
         }
@@ -180,21 +211,16 @@ const _sfc_main = {
         method: "POST",
         data: lesson2,
         success: () => {
+          student.deductHours();
           common_vendor.index.showToast({
             title
-          });
-        },
-        fail: (err) => {
-          common_vendor.index.showToast({
-            title: "网络异常",
-            icon: "error"
           });
         }
       });
     };
     const loadData = (month, date) => {
       utils_request.request({
-        url: `${define_process_env_default.baseUrl}/students/${lesson.studentId}/lessons?month=${month}&date=${date}`,
+        url: `${define_process_env_default.baseUrl}/students/${student.id}/lessons?month=${month}&date=${date}`,
         method: "GET",
         success: (res) => {
           const {
@@ -236,25 +262,26 @@ const _sfc_main = {
           ["end-date"]: "2099-12-31"
         }),
         e: common_vendor.f(lessons.value, (lesson2, k0, i0) => {
-          return common_vendor.e({
-            a: lesson2.status === 2
-          }, lesson2.status === 2 ? {
-            b: common_assets._imports_0$1
-          } : {}, {
+          return {
+            a: common_vendor.t(statusText(lesson2.status)),
+            b: common_vendor.n(statusClass(lesson2.status)),
             c: common_vendor.t(common_vendor.unref(utils_utils.formatSubject)(lesson2.subject)),
             d: common_vendor.t(lesson2.time),
             e: "d2ae5ec9-3-" + i0 + "," + ("d2ae5ec9-2-" + i0),
             f: common_vendor.t(lesson2.classroom),
             g: "d2ae5ec9-4-" + i0 + "," + ("d2ae5ec9-2-" + i0),
             h: common_vendor.t(lesson2.teacher),
-            i: lesson2.id,
-            j: common_vendor.o(($event) => swipeClick($event, lesson2), lesson2.id),
-            k: "d2ae5ec9-2-" + i0 + ",d2ae5ec9-1",
-            l: common_vendor.p({
+            i: common_vendor.n({
+              "freezon-course-info": lesson2.status !== 0
+            }),
+            j: lesson2.id,
+            k: common_vendor.o(($event) => swipeClick($event, lesson2), lesson2.id),
+            l: "d2ae5ec9-2-" + i0 + ",d2ae5ec9-1",
+            m: common_vendor.p({
               ["right-options"]: swipeOptions,
-              disabled: lesson2.status === 2
+              disabled: lesson2.status !== 0
             })
-          });
+          };
         }),
         f: common_vendor.p({
           type: "home",
@@ -266,87 +293,90 @@ const _sfc_main = {
           type: "icon-teacher",
           color: "#7f8c8d"
         }),
-        h: common_vendor.o(openDialog),
-        i: common_vendor.p({
+        h: common_vendor.sr(swipeRef, "d2ae5ec9-1", {
+          "k": "swipeRef"
+        }),
+        i: common_vendor.o(openDialog),
+        j: common_vendor.p({
           horizontal: "right"
         }),
-        j: common_vendor.p({
+        k: common_vendor.p({
           ["show-icon"]: true,
           ["background-color"]: "#eee",
           color: "#888",
           text: "将为【" + common_vendor.unref(student).name + "】添加课程"
         }),
-        k: common_vendor.o(($event) => newLesson.subject = $event),
-        l: common_vendor.p({
-          localdata: common_vendor.unref(utils_constant.subjectOptions),
+        l: common_vendor.o(($event) => newLesson.subject = $event),
+        m: common_vendor.p({
+          localdata: studentSubjectOptions.value,
           placeholder: "请选择科目",
           modelValue: newLesson.subject
         }),
-        m: common_vendor.p({
+        n: common_vendor.p({
           label: "科目",
           ["label-width"]: "70",
           required: true,
           name: "subject"
         }),
-        n: common_vendor.o(($event) => newLesson.teacher = $event),
-        o: common_vendor.p({
+        o: common_vendor.o(($event) => newLesson.teacher = $event),
+        p: common_vendor.p({
           placeholder: "请输入教师",
           modelValue: newLesson.teacher
         }),
-        p: common_vendor.p({
+        q: common_vendor.p({
           label: "教师",
           ["label-width"]: "70",
           required: true,
           name: "teacher"
         }),
-        q: common_vendor.o(($event) => newLesson.classroom = $event),
-        r: common_vendor.p({
+        r: common_vendor.o(($event) => newLesson.classroom = $event),
+        s: common_vendor.p({
           placeholder: "请输入教室",
           modelValue: newLesson.classroom
         }),
-        s: common_vendor.p({
+        t: common_vendor.p({
           label: "教室",
           ["label-width"]: "70",
           required: true,
           name: "classroom"
         }),
-        t: common_vendor.o(($event) => newLesson.date = $event),
-        v: common_vendor.p({
+        v: common_vendor.o(($event) => newLesson.date = $event),
+        w: common_vendor.p({
           start: formatDate(/* @__PURE__ */ new Date()),
           type: "date",
           placeholder: "请选择日期",
           modelValue: newLesson.date
         }),
-        w: common_vendor.p({
+        x: common_vendor.p({
           label: "日期",
           ["label-width"]: "70",
           required: true,
           name: "date"
         }),
-        x: common_vendor.o(handleTimeSelection),
-        y: common_vendor.o(($event) => newLesson.time = $event),
-        z: common_vendor.p({
+        y: common_vendor.o(handleTimeSelection),
+        z: common_vendor.o(($event) => newLesson.time = $event),
+        A: common_vendor.p({
           modelValue: newLesson.time
         }),
-        A: common_vendor.p({
+        B: common_vendor.p({
           label: "时间",
           ["label-width"]: "70",
           required: true,
           name: "time"
         }),
-        B: common_vendor.sr(form, "d2ae5ec9-8,d2ae5ec9-6", {
+        C: common_vendor.sr(form, "d2ae5ec9-8,d2ae5ec9-6", {
           "k": "form"
         }),
-        C: common_vendor.p({
+        D: common_vendor.p({
           rules,
           model: newLesson
         }),
-        D: common_vendor.o(closeDialog),
-        E: common_vendor.o(addLesson),
-        F: common_vendor.sr(popup, "d2ae5ec9-6", {
+        E: common_vendor.o(closeDialog),
+        F: common_vendor.o(addLesson),
+        G: common_vendor.sr(popup, "d2ae5ec9-6", {
           "k": "popup"
         }),
-        G: common_vendor.p({
+        H: common_vendor.p({
           type: "center"
         })
       };
