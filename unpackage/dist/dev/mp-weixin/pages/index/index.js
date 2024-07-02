@@ -33,10 +33,6 @@ const _sfc_main = {
       text: "添加学生",
       icon: "icon-add-student",
       selectedIcon: "icon-add-student"
-    }, {
-      text: "测试",
-      icon: "icon-add-student",
-      selectedIcon: "icon-add-student"
     }]);
     const query = () => {
       utils_request.request({
@@ -84,10 +80,6 @@ const _sfc_main = {
         common_vendor.index.navigateTo({
           url: "/pages/add-student/add-student"
         });
-      } else {
-        common_vendor.index.navigateTo({
-          url: "/pages/demo/demo"
-        });
       }
       fab.value.close();
     };
@@ -106,18 +98,19 @@ const _sfc_main = {
           modelValue: searchQuery.value
         }),
         e: common_vendor.f(filteredStudents.value, (student, index, i0) => {
-          return {
-            a: "1cf27b2a-2-" + i0 + ",1cf27b2a-0",
+          return common_vendor.e({
+            a: "1cf27b2a-2-" + i0 + ",1cf27b2a-1",
             b: common_vendor.p({
               ["custom-prefix"]: "iconfont",
               type: student.gender === 0 ? "icon-male" : "icon-female"
             }),
             c: common_vendor.t(student.name),
             d: common_vendor.t(common_vendor.unref(utils_utils.formatGrade)(student.grade)),
-            e: common_vendor.f(student.subjects, (subject, k1, i1) => {
+            e: common_vendor.t(student.createTime),
+            f: common_vendor.f(student.subjects, (subject, k1, i1) => {
               return {
                 a: subject,
-                b: "1cf27b2a-3-" + i0 + "-" + i1 + ",1cf27b2a-0",
+                b: "1cf27b2a-3-" + i0 + "-" + i1 + ",1cf27b2a-1",
                 c: common_vendor.p({
                   inverted: true,
                   text: common_vendor.unref(utils_utils.formatSubjectAbbr)(subject),
@@ -127,17 +120,29 @@ const _sfc_main = {
                 })
               };
             }),
-            f: common_vendor.t(student.createTime),
-            g: "1cf27b2a-4-" + i0 + ",1cf27b2a-0",
-            h: common_vendor.p({
-              ["text-color"]: "#fff",
-              text: student.remainHours
-            }),
-            i: index,
-            j: common_vendor.o(($event) => navigateToStudent(student.id), index)
-          };
+            g: student.remainHours.hours1v1
+          }, student.remainHours.hours1v1 ? {
+            h: "1cf27b2a-4-" + i0 + ",1cf27b2a-1",
+            i: common_vendor.p({
+              text: student.remainHours.hours1v1,
+              type: "success",
+              absolute: "rightTop"
+            })
+          } : {}, {
+            j: student.remainHours.hours1v3
+          }, student.remainHours.hours1v3 ? {
+            k: "1cf27b2a-5-" + i0 + ",1cf27b2a-1",
+            l: common_vendor.p({
+              text: student.remainHours.hours1v3,
+              type: "success",
+              absolute: "rightTop"
+            })
+          } : {}, {
+            m: index,
+            n: common_vendor.o(($event) => navigateToStudent(student.id), index)
+          });
         }),
-        f: common_vendor.sr(fab, "1cf27b2a-5,1cf27b2a-0", {
+        f: common_vendor.sr(fab, "1cf27b2a-6,1cf27b2a-1", {
           "k": "fab"
         }),
         g: common_vendor.o(trigger),
@@ -146,7 +151,7 @@ const _sfc_main = {
           horizontal: "right",
           direction: "vertical"
         }),
-        i: common_vendor.sr(paging, "1cf27b2a-0", {
+        i: common_vendor.sr(paging, "1cf27b2a-1", {
           "k": "paging"
         }),
         j: common_vendor.o(query),

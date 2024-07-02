@@ -55,6 +55,11 @@
 		background-color: #fff;
 		border-bottom: 1px solid #f0f0f0;
 }
+.course-type.data-v-d2ae5ec9 {
+		color: #888;
+		font-size: 12px;
+		font-weight: 400;
+}
 .freezon-course-info.data-v-d2ae5ec9 {
 		background-color: #f9f9f9;
 		border-bottom: 1px solid #f0f0f0;

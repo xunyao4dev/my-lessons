@@ -2,10 +2,43 @@
 	<view class="page-container">
 		<view class="student-card">
 			<view class="info-section">
-				<view class="info-item" v-for="(info, index) in infoList" :key="index" :class="[{ 'clickable': info.clickable }]" @click="info.clickable ? info.clickAction() : null">
-					<uni-icons custom-prefix="iconfont" :type="info.iconType" class="info-icon"></uni-icons>
-					<text class="label">{{ info.label }}</text>
-					<text class="value">{{ info.value }}</text>
+				<view class="info-item">
+					<uni-icons custom-prefix="iconfont" type="icon-ming" class="info-icon"></uni-icons>
+					<text class="label">姓名</text>
+					<text class="value">{{ student.name }}</text>
+				</view>
+				<view class="info-item">
+					<uni-icons custom-prefix="iconfont" type="icon-gender" class="info-icon"></uni-icons>
+					<text class="label">性别</text>
+					<text class="value">{{ genderText }}</text>
+				</view>
+				<view class="info-item">
+					<uni-icons custom-prefix="iconfont" type="icon-nianji" class="info-icon"></uni-icons>
+					<text class="label">年级</text>
+					<text class="value">{{ formatGrade(student.grade) }}</text>
+				</view>
+				<view class="info-item">
+					<uni-icons custom-prefix="iconfont" type="icon-keshi" class="info-icon"></uni-icons>
+					<text class="label">课时</text>
+					<view class="value">
+						<view v-if="student.remainHours.hours1v1">1v1: {{student.remainHours.hours1v1}}课时</view>
+						<view v-if="student.remainHours.hours1v3">1v3: {{student.remainHours.hours1v3}}课时</view>
+					</view>
+				</view>
+				<view class="info-item">
+					<uni-icons custom-prefix="iconfont" type="icon-kemu" class="info-icon"></uni-icons>
+					<text class="label">科目</text>
+					<text class="value">{{ subjectsText }}</text>
+				</view>
+				<view class="info-item clickable" @click="makeCall(student.phone)">
+					<uni-icons custom-prefix="iconfont" type="icon-shouji" class="info-icon"></uni-icons>
+					<text class="label">手机</text>
+					<text class="value">{{ student.phone }}</text>
+				</view>
+				<view class="info-item">
+					<uni-icons custom-prefix="iconfont" type="icon-beizhu" class="info-icon"></uni-icons>
+					<text class="label">备注</text>
+					<text class="value">{{ student.remark }}</text>
 				</view>
 			</view>
 			<view class="button-group">
@@ -25,7 +58,6 @@
 		</view>
 	</view>
 </template>
-
 <script setup>
 	import {
 		ref,
@@ -38,9 +70,6 @@
 		useStudentStore
 	} from '@/store/student';
 	import {
-		useLessonStore
-	} from '../../store/lesson';
-	import {
 		request
 	} from '../../utils/request';
 	import {
@@ -51,7 +80,6 @@
 		formatGrade
 	} from '../../utils/utils';
 	const student = useStudentStore();
-	const lesson = useLessonStore();
 	const makeCall = ( phone ) => {
 		uni.makePhoneCall( {
 			phoneNumber: phone,
@@ -64,44 +92,6 @@
 	const subjectsText = computed( () => {
 		return student.subjects.map( subject => subjectOptions.find( i => subject === i.value )?.text ).join( ', ' );
 	} );
-	const infoList = computed( () => [ {
-			iconType: 'icon-ming',
-			label: '姓名',
-			value: student.name
-		},
-		{
-			iconType: 'icon-gender',
-			label: '性别',
-			value: genderText.value
-		},
-		{
-			iconType: 'icon-nianji',
-			label: '年级',
-			value: formatGrade( student.grade )
-		},
-		{
-			iconType: 'icon-keshi',
-			label: '课时',
-			value: student.remainHours
-		},
-		{
-			iconType: 'icon-kemu',
-			label: '科目',
-			value: subjectsText.value
-		},
-		{
-			iconType: 'icon-shouji',
-			label: '手机',
-			value: student.phone,
-			clickable: true,
-			clickAction: () => makeCall( student.phone )
-		},
-		{
-			iconType: 'icon-beizhu',
-			label: '备注',
-			value: student.remark
-		}
-	] );
 	const editInfo = ( studentId ) => {
 		uni.navigateTo( {
 			url: `/pages/add-student/add-student?studentId=${studentId}`
@@ -123,7 +113,6 @@
 	} );
 
 </script>
-
 <style scoped>
 	.page-container {
 		padding: 20px 0;

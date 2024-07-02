@@ -105,8 +105,19 @@ const gradeOptions = [{
 	}
 ]
 
+const typeOptions = [{
+		value: 1,
+		text: "一对一"
+	},
+	{
+		value: 3,
+		text: "一对三"
+	}
+]
+
 export {
 	subjectOptions,
 	genderOptions,
-	gradeOptions
+	gradeOptions,
+	typeOptions
 }

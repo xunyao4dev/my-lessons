@@ -8,18 +8,7 @@
 				<uni-data-checkbox mode="tag" v-model="student.gender" :localdata="genderOptions"></uni-data-checkbox>
 			</uni-forms-item>
 			<uni-forms-item label="课时" required name="remainHours">
-				<view class="input-container">
-					<uni-easyinput type="number" v-model.lazy="student.remainHours.hour1v1" placeholder="1v1课时" trim @input="validateNumber($event, 'remainHours1v1')">
-						<template #right>
-							<view class="unit">1v1</view>
-						</template>
-					</uni-easyinput>
-					<uni-easyinput type="number" v-model.lazy="student.remainHours.hour1v3" placeholder="1v3课时" trim @input="validateNumber($event, 'remainHours1v3')">
-						<template #right>
-							<view class="unit">1v3</view>
-						</template>
-					</uni-easyinput>
-				</view>
+				<course-hour-input v-model:remainHours="student.remainHours"></course-hour-input>
 			</uni-forms-item>
 			<uni-forms-item label="年级" required name="grade">
 				<uni-data-select v-model="student.grade" :localdata="gradeOptions" placeholder="请选择年级"></uni-data-select>
@@ -57,8 +46,8 @@
 		name: '',
 		gender: '',
 		remainHours: {
-			hour1v1: '',
-			hour1v3: ''
+			hours1v1: '',
+			hours1v3: ''
 		},
 		grade: '',
 		subjects: [],
@@ -93,8 +82,13 @@
 		},
 		remainHours: {
 			rules: [ {
+				required: true,
+				errorMessage: '1v1和1v3最少输入一项'
+			}, {
 				validateFunction: function ( rule, value, data, callback ) {
-					console.log(data)
+					if (!value.hours1v1 && !value.hours1v3) {
+					  callback('1v1和1v3最少输入一项')
+					}
 					return true
 				}
 			} ]

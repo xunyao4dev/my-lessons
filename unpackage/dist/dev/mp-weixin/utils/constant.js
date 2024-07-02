@@ -106,6 +106,17 @@ const gradeOptions = [
     text: "高三"
   }
 ];
+const typeOptions = [
+  {
+    value: 1,
+    text: "一对一"
+  },
+  {
+    value: 3,
+    text: "一对三"
+  }
+];
 exports.genderOptions = genderOptions;
 exports.gradeOptions = gradeOptions;
 exports.subjectOptions = subjectOptions;
+exports.typeOptions = typeOptions;

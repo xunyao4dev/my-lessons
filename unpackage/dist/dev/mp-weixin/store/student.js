@@ -7,7 +7,10 @@ const useStudentStore = common_vendor.defineStore("student", {
       name: void 0,
       gender: void 0,
       grade: void 0,
-      remainHours: void 0,
+      remainHours: {
+        hours1v1: "",
+        hours1v3: ""
+      },
       subjects: [],
       phone: void 0,
       remark: void 0
@@ -17,8 +20,12 @@ const useStudentStore = common_vendor.defineStore("student", {
     setStudent(student) {
       Object.assign(this, student);
     },
-    deductHours() {
-      this.remainHours = this.remainHours - 1;
+    deductHours(type) {
+      if (type === 1) {
+        this.remainHours.hours1v1 -= 1;
+      } else {
+        this.remainHours.hours1v3 -= 1;
+      }
     },
     reset() {
       this.setStudent({

@@ -8,17 +8,19 @@ if (!Array) {
   const _easycom_uni_easyinput2 = common_vendor.resolveComponent("uni-easyinput");
   const _easycom_uni_forms_item2 = common_vendor.resolveComponent("uni-forms-item");
   const _easycom_uni_data_checkbox2 = common_vendor.resolveComponent("uni-data-checkbox");
+  const _easycom_course_hour_input2 = common_vendor.resolveComponent("course-hour-input");
   const _easycom_uni_data_select2 = common_vendor.resolveComponent("uni-data-select");
   const _easycom_uni_forms2 = common_vendor.resolveComponent("uni-forms");
-  (_easycom_uni_easyinput2 + _easycom_uni_forms_item2 + _easycom_uni_data_checkbox2 + _easycom_uni_data_select2 + _easycom_uni_forms2)();
+  (_easycom_uni_easyinput2 + _easycom_uni_forms_item2 + _easycom_uni_data_checkbox2 + _easycom_course_hour_input2 + _easycom_uni_data_select2 + _easycom_uni_forms2)();
 }
 const _easycom_uni_easyinput = () => "../../uni_modules/uni-easyinput/components/uni-easyinput/uni-easyinput.js";
 const _easycom_uni_forms_item = () => "../../uni_modules/uni-forms/components/uni-forms-item/uni-forms-item.js";
 const _easycom_uni_data_checkbox = () => "../../uni_modules/uni-data-checkbox/components/uni-data-checkbox/uni-data-checkbox.js";
+const _easycom_course_hour_input = () => "../../uni_modules/course-hour-input/components/course-hour-input/course-hour-input.js";
 const _easycom_uni_data_select = () => "../../uni_modules/uni-data-select/components/uni-data-select/uni-data-select.js";
 const _easycom_uni_forms = () => "../../uni_modules/uni-forms/components/uni-forms/uni-forms.js";
 if (!Math) {
-  (_easycom_uni_easyinput + _easycom_uni_forms_item + _easycom_uni_data_checkbox + _easycom_uni_data_select + _easycom_uni_forms)();
+  (_easycom_uni_easyinput + _easycom_uni_forms_item + _easycom_uni_data_checkbox + _easycom_course_hour_input + _easycom_uni_data_select + _easycom_uni_forms)();
 }
 const _sfc_main = {
   __name: "add-student",
@@ -28,8 +30,8 @@ const _sfc_main = {
       name: "",
       gender: "",
       remainHours: {
-        hour1v1: "",
-        hour1v3: ""
+        hours1v1: "",
+        hours1v3: ""
       },
       grade: "",
       subjects: [],
@@ -56,8 +58,13 @@ const _sfc_main = {
       },
       remainHours: {
         rules: [{
+          required: true,
+          errorMessage: "1v1和1v3最少输入一项"
+        }, {
           validateFunction: function(rule, value, data, callback) {
-            console.log(data);
+            if (!value.hours1v1 && !value.hours1v3) {
+              callback("1v1和1v3最少输入一项");
+            }
             return true;
           }
         }]
@@ -145,85 +152,69 @@ const _sfc_main = {
           required: true,
           name: "gender"
         }),
-        g: common_vendor.o(($event) => validateNumber($event, "remainHours1v1")),
-        h: common_vendor.o(common_vendor.m(($event) => student.remainHours.hour1v1 = $event, {
-          lazy: true
-        }, true)),
+        g: common_vendor.o(($event) => student.remainHours = $event),
+        h: common_vendor.p({
+          remainHours: student.remainHours
+        }),
         i: common_vendor.p({
-          type: "number",
-          placeholder: "1v1课时",
-          trim: true,
-          modelValue: student.remainHours.hour1v1
-        }),
-        j: common_vendor.o(($event) => validateNumber($event, "remainHours1v3")),
-        k: common_vendor.o(common_vendor.m(($event) => student.remainHours.hour1v3 = $event, {
-          lazy: true
-        }, true)),
-        l: common_vendor.p({
-          type: "number",
-          placeholder: "1v3课时",
-          trim: true,
-          modelValue: student.remainHours.hour1v3
-        }),
-        m: common_vendor.p({
           label: "课时",
           required: true,
           name: "remainHours"
         }),
-        n: common_vendor.o(($event) => student.grade = $event),
-        o: common_vendor.p({
+        j: common_vendor.o(($event) => student.grade = $event),
+        k: common_vendor.p({
           localdata: common_vendor.unref(utils_constant.gradeOptions),
           placeholder: "请选择年级",
           modelValue: student.grade
         }),
-        p: common_vendor.p({
+        l: common_vendor.p({
           label: "年级",
           required: true,
           name: "grade"
         }),
-        q: common_vendor.o(($event) => student.subjects = $event),
-        r: common_vendor.p({
+        m: common_vendor.o(($event) => student.subjects = $event),
+        n: common_vendor.p({
           mode: "tag",
           multiple: true,
           localdata: common_vendor.unref(utils_constant.subjectOptions),
           modelValue: student.subjects
         }),
-        s: common_vendor.p({
+        o: common_vendor.p({
           label: "科目",
           required: true,
           name: "subjects"
         }),
-        t: common_vendor.o(($event) => validateNumber($event, "phone")),
-        v: common_vendor.o(common_vendor.m(($event) => student.phone = $event, {
+        p: common_vendor.o(($event) => validateNumber($event, "phone")),
+        q: common_vendor.o(common_vendor.m(($event) => student.phone = $event, {
           lazy: true
         }, true)),
-        w: common_vendor.p({
+        r: common_vendor.p({
           type: "number",
           placeholder: "请输入联系方式",
           trim: true,
           modelValue: student.phone
         }),
-        x: common_vendor.p({
+        s: common_vendor.p({
           label: "手机",
           required: true,
           name: "phone"
         }),
-        y: common_vendor.o(($event) => student.remark = $event),
-        z: common_vendor.p({
+        t: common_vendor.o(($event) => student.remark = $event),
+        v: common_vendor.p({
           type: "textarea",
           placeholder: "请输入备注信息",
           trim: true,
           modelValue: student.remark
         }),
-        A: common_vendor.p({
+        w: common_vendor.p({
           label: "备注",
           name: "remark"
         }),
-        B: common_vendor.o(submit),
-        C: common_vendor.sr(form, "a84615d2-0", {
+        x: common_vendor.o(submit),
+        y: common_vendor.sr(form, "a84615d2-0", {
           "k": "form"
         }),
-        D: common_vendor.p({
+        z: common_vendor.p({
           model: student,
           ["label-position"]: "right"
         })

@@ -1,7 +1,6 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
 const store_student = require("../../store/student.js");
-const store_lesson = require("../../store/lesson.js");
 const utils_request = require("../../utils/request.js");
 const utils_constant = require("../../utils/constant.js");
 const utils_utils = require("../../utils/utils.js");
@@ -18,7 +17,6 @@ const _sfc_main = {
   __name: "student-info",
   setup(__props) {
     const student = store_student.useStudentStore();
-    store_lesson.useLessonStore();
     const makeCall = (phone) => {
       common_vendor.index.makePhoneCall({
         phoneNumber: phone,
@@ -37,45 +35,6 @@ const _sfc_main = {
         return (_a = utils_constant.subjectOptions.find((i) => subject === i.value)) == null ? void 0 : _a.text;
       }).join(", ");
     });
-    const infoList = common_vendor.computed(() => [
-      {
-        iconType: "icon-ming",
-        label: "姓名",
-        value: student.name
-      },
-      {
-        iconType: "icon-gender",
-        label: "性别",
-        value: genderText.value
-      },
-      {
-        iconType: "icon-nianji",
-        label: "年级",
-        value: utils_utils.formatGrade(student.grade)
-      },
-      {
-        iconType: "icon-keshi",
-        label: "课时",
-        value: student.remainHours
-      },
-      {
-        iconType: "icon-kemu",
-        label: "科目",
-        value: subjectsText.value
-      },
-      {
-        iconType: "icon-shouji",
-        label: "手机",
-        value: student.phone,
-        clickable: true,
-        clickAction: () => makeCall(student.phone)
-      },
-      {
-        iconType: "icon-beizhu",
-        label: "备注",
-        value: student.remark
-      }
-    ]);
     const editInfo = (studentId) => {
       common_vendor.index.navigateTo({
         url: `/pages/add-student/add-student?studentId=${studentId}`
@@ -96,34 +55,61 @@ const _sfc_main = {
       });
     });
     return (_ctx, _cache) => {
-      return {
-        a: common_vendor.f(infoList.value, (info, index, i0) => {
-          return {
-            a: "495a661b-0-" + i0,
-            b: common_vendor.p({
-              ["custom-prefix"]: "iconfont",
-              type: info.iconType
-            }),
-            c: common_vendor.t(info.label),
-            d: common_vendor.t(info.value),
-            e: index,
-            f: common_vendor.n({
-              "clickable": info.clickable
-            }),
-            g: common_vendor.o(($event) => info.clickable ? info.clickAction() : null, index)
-          };
+      return common_vendor.e({
+        a: common_vendor.p({
+          ["custom-prefix"]: "iconfont",
+          type: "icon-ming"
         }),
-        b: common_vendor.p({
+        b: common_vendor.t(common_vendor.unref(student).name),
+        c: common_vendor.p({
+          ["custom-prefix"]: "iconfont",
+          type: "icon-gender"
+        }),
+        d: common_vendor.t(genderText.value),
+        e: common_vendor.p({
+          ["custom-prefix"]: "iconfont",
+          type: "icon-nianji"
+        }),
+        f: common_vendor.t(common_vendor.unref(utils_utils.formatGrade)(common_vendor.unref(student).grade)),
+        g: common_vendor.p({
+          ["custom-prefix"]: "iconfont",
+          type: "icon-keshi"
+        }),
+        h: common_vendor.unref(student).remainHours.hours1v1
+      }, common_vendor.unref(student).remainHours.hours1v1 ? {
+        i: common_vendor.t(common_vendor.unref(student).remainHours.hours1v1)
+      } : {}, {
+        j: common_vendor.unref(student).remainHours.hours1v3
+      }, common_vendor.unref(student).remainHours.hours1v3 ? {
+        k: common_vendor.t(common_vendor.unref(student).remainHours.hours1v3)
+      } : {}, {
+        l: common_vendor.p({
+          ["custom-prefix"]: "iconfont",
+          type: "icon-kemu"
+        }),
+        m: common_vendor.t(subjectsText.value),
+        n: common_vendor.p({
+          ["custom-prefix"]: "iconfont",
+          type: "icon-shouji"
+        }),
+        o: common_vendor.t(common_vendor.unref(student).phone),
+        p: common_vendor.o(($event) => makeCall(common_vendor.unref(student).phone)),
+        q: common_vendor.p({
+          ["custom-prefix"]: "iconfont",
+          type: "icon-beizhu"
+        }),
+        r: common_vendor.t(common_vendor.unref(student).remark),
+        s: common_vendor.p({
           ["custom-prefix"]: "iconfont",
           type: "icon-bianji"
         }),
-        c: common_vendor.o(($event) => editInfo(common_vendor.unref(student).id)),
-        d: common_vendor.p({
+        t: common_vendor.o(($event) => editInfo(common_vendor.unref(student).id)),
+        v: common_vendor.p({
           ["custom-prefix"]: "iconfont",
           type: "icon-paikebiao"
         }),
-        e: common_vendor.o(lessonInfo)
-      };
+        w: common_vendor.o(lessonInfo)
+      });
     };
   }
 };

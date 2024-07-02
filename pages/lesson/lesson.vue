@@ -10,7 +10,10 @@
 						<text :class="['stamp', statusClass(lesson.status)]">{{statusText(lesson.status)}}</text>
 						<view class="course-content">
 							<view class="course-header">
-								<text class="course-title">{{ formatSubject(lesson.subject) }}</text>
+								<text class="course-title">
+									{{ formatSubject(lesson.subject) }}
+									<text class="course-type">{{ typeText(lesson.type) }}</text>
+								</text>
 								<text class="course-time">{{ lesson.time }}</text>
 							</view>
 							<view class="course-details">
@@ -42,6 +45,9 @@
 						<uni-forms-item label="科目" label-width="70" required name="subject">
 							<uni-data-select v-model="newLesson.subject" :localdata="studentSubjectOptions" placeholder="请选择科目"></uni-data-select>
 						</uni-forms-item>
+						<uni-forms-item label="班型" label-width="70" required name="type">
+							<uni-data-select v-model="newLesson.type" :localdata="studentTypeOptions" placeholder="请选择班型"></uni-data-select>
+						</uni-forms-item>
 						<uni-forms-item label="教师" label-width="70" required name="teacher">
 							<uni-easyinput v-model="newLesson.teacher" placeholder="请输入教师" />
 						</uni-forms-item>
@@ -49,7 +55,7 @@
 							<uni-easyinput v-model="newLesson.classroom" placeholder="请输入教室" />
 						</uni-forms-item>
 						<uni-forms-item label="日期" label-width="70" required name="date">
-							<uni-datetime-picker v-model="newLesson.date" :start="formatDate(new Date())" type="date" placeholder="请选择日期" />
+							<uni-datetime-picker v-model="newLesson.date" type="date" placeholder="请选择日期" />
 						</uni-forms-item>
 						<uni-forms-item label="时间" label-width="70" required name="time">
 							<time-range-picker v-model="newLesson.time" @complete="handleTimeSelection" />
@@ -79,7 +85,8 @@
 		useStudentStore
 	} from '../../store/student'
 	import {
-		subjectOptions
+		subjectOptions,
+		typeOptions
 	} from '../../utils/constant'
 	import {
 		formatSubject
@@ -133,6 +140,12 @@
 				errorMessage: '科目不能为空'
 			} ]
 		},
+		type: {
+			rules: [ {
+				required: true,
+				errorMessage: '课程类型不能为空'
+			} ]
+		},
 		teacher: {
 			rules: [ {
 				required: true,
@@ -160,6 +173,23 @@
 	} )
 	const popup = ref()
 	const studentSubjectOptions = computed( () => subjectOptions.filter( s => student.subjects.includes( s.value ) ) )
+	const studentTypeOptions = typeOptions
+		.filter( option => {
+			if ( option.value === 1 ) {
+				return student.remainHours.hours1v1 > 0;
+			} else if ( option.value === 3 ) {
+				return student.remainHours.hours1v3 > 0;
+			}
+			return false;
+		} )
+		.map( option => {
+			if ( option.value === 1 ) {
+				option.text += ` (剩余：${student.remainHours.hours1v1} 课时)`;
+			} else if ( option.value === 3 ) {
+				option.text += ` (剩余：${student.remainHours.hours1v3} 课时)`;
+			}
+			return option;
+		} );
 	const openDialog = () => {
 		popup.value.open()
 	}
@@ -171,6 +201,13 @@
 			return '已上课'
 		case 2:
 			return '已取消'
+		}
+	}
+	const typeText = ( type ) => {
+		if ( type === 1 ) {
+			return '一对一'
+		} else {
+			return '一对三'
 		}
 	}
 	const statusClass = ( status ) => {
@@ -259,7 +296,7 @@
 			method: 'POST',
 			data: lesson,
 			success: () => {
-				student.deductHours()
+				student.deductHours(lesson.type)
 				uni.showToast( {
 					title: title
 				} )
@@ -357,6 +394,12 @@
 	.course-info {
 		background-color: #fff;
 		border-bottom: 1px solid #f0f0f0;
+	}
+
+	.course-type {
+		color: #888;
+		font-size: 12px;
+		font-weight: 400;
 	}
 
 	.freezon-course-info {

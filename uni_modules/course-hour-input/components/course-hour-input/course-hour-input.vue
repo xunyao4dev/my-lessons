@@ -1,11 +1,11 @@
 <template>
 	<view class="input-container">
-		<uni-easyinput v-model.lazy="remainHours.hours1v1" placeholder="1v1课时" trim @input="validateInput($event, 'hours1v1')">
+		<uni-easyinput v-model="localHours.hours1v1" type="text" placeholder="1v1课时" trim @input="validateInput($event, 'hours1v1')">
 			<template #right>
 				<view class="unit">1v1</view>
 			</template>
 		</uni-easyinput>
-		<uni-easyinput v-model.lazy="remainHours.hours1v3" placeholder="1v3课时" trim @input="validateInput($event, 'hours1v3')">
+		<uni-easyinput v-model="localHours.hours1v3" type="text" placeholder="1v3课时" trim @input="validateInput($event, 'hours1v3')">
 			<template #right>
 				<view class="unit">1v3</view>
 			</template>
@@ -15,44 +15,42 @@
 
 <script>
 	import {
-		ref,
-		defineProps,
-		defineEmits,
-		watch
-	} from 'vue';
+		reactive,
+		watch,
+		nextTick
+	} from 'vue'
 	export default {
 		props: {
 			remainHours: {
 				type: Object,
-				default: () => ( {
-					hours1v1: '',
-					hours1v3: ''
-				} )
+				required: true
 			}
 		},
-		emits: [ 'update:remainHours' ],
 		setup( props, {
 			emit
 		} ) {
-			const remainHours = ref( {
+			const localHours = reactive( {
 				...props.remainHours
 			} );
+			const validateInput = ( value, field ) => {
+				nextTick(() => {
+					value = value.replace( /\D/g, '' )
+					localHours[ field ] = value
+					emit( 'update:remainHours', {
+						...localHours
+					} )
+				})
+				
+			};
 			watch( () => props.remainHours, ( newVal ) => {
-				remainHours.value = {
-					...newVal
-				};
+				Object.assign( localHours, newVal );
 			} );
-			const validateInput = ( event, type ) => {
-				const number = event.replace( /\D/g, '' );
-				remainHours.value[ type ] = number;
-				emit( 'update:remainHours', remainHours.value );
-			};
 			return {
-				remainHours,
-				validateInput
-			};
+				validateInput,
+				localHours
+			}
 		}
-	};
+	}
 
 </script>
 

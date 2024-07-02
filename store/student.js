@@ -9,7 +9,10 @@ export const useStudentStore = defineStore('student', {
 			name: undefined,
 			gender: undefined,
 			grade: undefined,
-			remainHours: undefined,
+			remainHours: {
+				hours1v1: '',
+				hours1v3: ''
+			},
 			subjects: [],
 			phone: undefined,
 			remark: undefined
@@ -19,8 +22,12 @@ export const useStudentStore = defineStore('student', {
 		setStudent(student) {
 			Object.assign(this, student)
 		},
-		deductHours() {
-			this.remainHours = this.remainHours - 1
+		deductHours(type) {
+			if (type === 1) {
+				this.remainHours.hours1v1 -= 1;
+			} else {
+				this.remainHours.hours1v3 -= 1;
+			}
 		},
 		reset() {
 			this.setStudent({
