@@ -1,8 +1,7 @@
 <template>
 	<view class="page-container">
-		<uni-search-bar v-model="searchQuery" @confirm="onSearch" @input="onInput" placeholder="请输入学生姓名" class="search-bar" />
-		<z-paging ref="paging" v-model="students" @query="query" class="container" :paging-style="{'background-color': '#fafafa'}" :refresher-end-bounce-enabled="false" empty-view-text="您还没有学生哦~快去添加吧!">
-			<view v-for="(student, index) in filteredStudents" :key="index" class="student-item" @tap="navigateToStudent(student.id)">
+		<z-paging ref="paging" v-model="students" @query="query" class="container" :paging-style="pagingStyle" empty-view-text="您还没有学生哦~快去添加吧!">
+			<view v-for="(student, index) in students" :key="student.id" class="student-item" @tap="navigateToStudent(student.id)">
 				<view class="student-card">
 					<view class="header">
 						<view class="left">
@@ -18,17 +17,18 @@
 						<view class="subjects">
 							<uni-tag :inverted="true" v-for="subject in student.subjects" :key="subject" :text="formatSubjectAbbr(subject)" type="warning" size="mini" custom-style="margin-right: 4px; font-weight: bold;" />
 						</view>
-							<view class="time-remaining">
-								<uni-badge v-if="student.remainHours.hours1v1" :text="student.remainHours.hours1v1" type="success" absolute="rightTop">
-									<view class="box"><text class="box-text">1v1</text></view>
-								</uni-badge>
-								<uni-badge v-if="student.remainHours.hours1v3" :text="student.remainHours.hours1v3" type="success" absolute="rightTop">
-									<view class="box"><text class="box-text">1v3</text></view>
-								</uni-badge>
-							</view>
+						<view class="time-remaining">
+							<uni-badge v-if="student.remainHours.hours1v1" :text="student.remainHours.hours1v1" type="success" absolute="rightTop">
+								<view class="box"><text class="box-text">1v1</text></view>
+							</uni-badge>
+							<uni-badge v-if="student.remainHours.hours1v3" :text="student.remainHours.hours1v3" type="success" absolute="rightTop">
+								<view class="box"><text class="box-text">1v3</text></view>
+							</uni-badge>
+						</view>
 					</view>
 				</view>
 			</view>
+			<view class="list-footer"></view>
 			<uni-fab ref="fab" :content="fabContent" horizontal="right" direction="vertical" @trigger="trigger" />
 		</z-paging>
 	</view>
@@ -37,10 +37,11 @@
 <script setup>
 	import {
 		ref,
-	} from 'vue'
+		reactive
+	} from 'vue';
 	import {
 		onShow
-	} from '@dcloudio/uni-app'
+	} from '@dcloudio/uni-app';
 	import {
 		formatGrade,
 		formatSubjectAbbr
@@ -49,49 +50,36 @@
 		request
 	} from '../../utils/request';
 	const students = ref( [] );
-	const filteredStudents = ref( [] );
-	const searchQuery = ref( '' );
 	const fab = ref();
 	const paging = ref();
 	const fabContent = ref( [ {
 		text: '添加学生',
 		icon: 'icon-add-student',
 		selectedIcon: 'icon-add-student',
+	}, {
+		text: '测试',
+		icon: 'icon-add-student',
+		selectedIcon: 'icon-add-student',
 	} ] );
-	const query = () => {
+	const pagingStyle = ref( {
+		'background-color': '#fafafa'
+	} )
+	const query = ( pageNo, pageSize ) => {
 		request( {
-			url: `${process.env.baseUrl}/students`,
+			url: `${process.env.baseUrl}/students?pageNo=${pageNo}&pageSize=${pageSize}`,
 			method: 'GET',
 			success: ( res ) => {
-				students.value = res.data.data;
-				filteredStudents.value = students.value;
-				paging.value.complete( res.data.data );
+				const {
+					list,
+					hasNextPage
+				} = res.data.data;
+				paging.value.completeByNoMore( list, !hasNextPage );
 			},
-			fail: ( err ) => {
-				uni.showToast( {
-					title: '网络异常',
-					icon: 'error',
-				} );
+			fail: () => {
 				paging.value.complete( false );
 			},
 		} );
-	};
-	const onSearch = () => {
-		filterStudents();
-	};
-	const onInput = ( value ) => {
-		searchQuery.value = value;
-		filterStudents();
-	};
-	const filterStudents = () => {
-		if ( searchQuery.value ) {
-			filteredStudents.value = students.value.filter( ( student ) =>
-				student.name.includes( searchQuery.value )
-			);
-		} else {
-			filteredStudents.value = students.value;
-		}
-	};
+	}
 	const navigateToStudent = ( id ) => {
 		uni.navigateTo( {
 			url: `/pages/student-info/student-info?studentId=${id}`,
@@ -104,16 +92,22 @@
 			uni.navigateTo( {
 				url: '/pages/add-student/add-student',
 			} );
+		} else {
+			uni.navigateTo({
+				url: '/pages/demo/demo'
+			})
 		}
 		fab.value.close();
 	};
 	onShow( () => {
 		if ( paging.value ) {
+			paging.value.clear();
 			paging.value.reload();
 		}
 	} );
 
 </script>
+
 <style scoped>
 	.page-container {
 		padding: 10px;
@@ -190,17 +184,6 @@
 		margin-bottom: 4px;
 	}
 
-	.label {
-		color: #888;
-		font-size: 14px;
-		margin-right: 4px;
-	}
-
-	.value {
-		font-size: 14px;
-		color: #333;
-	}
-
 	.uni-badge {
 		margin-left: 4px;
 	}
@@ -217,6 +200,10 @@
 		color: #fff;
 		font-weight: bold;
 		font-size: 10px;
+	}
+
+	.list-footer {
+		height: 45px;
 	}
 
 	.box-text {

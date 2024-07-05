@@ -9,7 +9,7 @@
     "uni-notice-bar": "../../uni_modules/uni-notice-bar/components/uni-notice-bar/uni-notice-bar",
     "uni-data-select": "../../uni_modules/uni-data-select/components/uni-data-select/uni-data-select",
     "uni-forms-item": "../../uni_modules/uni-forms/components/uni-forms-item/uni-forms-item",
-    "uni-easyinput": "../../uni_modules/uni-easyinput/components/uni-easyinput/uni-easyinput",
+    "editable-select": "../../uni_modules/editable-select/components/editable-select/editable-select",
     "uni-datetime-picker": "../../uni_modules/uni-datetime-picker/components/uni-datetime-picker/uni-datetime-picker",
     "time-range-picker": "../../uni_modules/time-range-picker/components/time-range-picker/time-range-picker",
     "uni-forms": "../../uni_modules/uni-forms/components/uni-forms/uni-forms",

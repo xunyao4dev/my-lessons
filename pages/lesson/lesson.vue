@@ -43,16 +43,17 @@
 				<view class="dialog-body">
 					<uni-forms ref="form" :rules="rules" :model="newLesson">
 						<uni-forms-item label="科目" label-width="70" required name="subject">
-							<uni-data-select v-model="newLesson.subject" :localdata="studentSubjectOptions" placeholder="请选择科目"></uni-data-select>
+							<uni-data-select v-model="newLesson.subject" :localdata="studentSubjectOptions" placeholder="请选择科目" @change=""></uni-data-select>
 						</uni-forms-item>
 						<uni-forms-item label="班型" label-width="70" required name="type">
 							<uni-data-select v-model="newLesson.type" :localdata="studentTypeOptions" placeholder="请选择班型"></uni-data-select>
 						</uni-forms-item>
-						<uni-forms-item label="教师" label-width="70" required name="teacher">
-							<uni-easyinput v-model="newLesson.teacher" placeholder="请输入教师" />
+						<!-- 只有选了科目才能选老师 -->
+						<uni-forms-item v-if="formatSubject(newLesson.subject)" label="教师" label-width="70" required name="teacher">
+							<editable-select :title="formatSubject(newLesson.subject)" :options="teacherOptions" :placeholder="'请选择老师'" :selected="newLesson.teacher" @update:selected="updateTeacherSelected" @update:options="updateTeacherOptions" :saveOptions="saveTeacherOptions" />
 						</uni-forms-item>
 						<uni-forms-item label="教室" label-width="70" required name="classroom">
-							<uni-easyinput v-model="newLesson.classroom" placeholder="请输入教室" />
+							<editable-select :options="classroomOptions" :placeholder="'请选择教室'" :selected="newLesson.classroom" @update:selected="updateClassroomSelected" @update:options="updateClassroomOptions" :saveOptions="saveClassroomOptions" />
 						</uni-forms-item>
 						<uni-forms-item label="日期" label-width="70" required name="date">
 							<uni-datetime-picker v-model="newLesson.date" type="date" placeholder="请选择日期" />
@@ -74,9 +75,11 @@
 <script setup>
 	import {
 		ref,
-		reactive,
+		computed,
 		onBeforeMount,
-		computed
+		watch,
+		reactive,
+		watchEffect
 	} from 'vue'
 	import {
 		useLessonStore
@@ -101,7 +104,26 @@
 	const student = useStudentStore()
 	const selected = ref( [] )
 	const lessons = ref( [] )
-	const swipeOptions = reactive( [ {
+	const newLesson = reactive( {} )
+	// 老师的总配置，根据科目来的
+	const teacherConfig = ref( [] )
+	const teacherOptions = ref( [] )
+	const classroomOptions = ref( [] )
+	watch( [ () => newLesson.subject, teacherConfig ], ( [ newSubject, newConfig ], [ oldSubject, oldConfig ] ) => {
+		const selectedConfig = teacherConfig.value?.find( config => config.subject == newSubject )
+		if ( selectedConfig ) {
+			teacherOptions.value = selectedConfig.teachers;
+		} else {
+			teacherOptions.value = []
+		}
+		if ( newSubject !== oldSubject ) {
+			newLesson.teacher = ''
+		}
+	}, {
+		immediate: true,
+		deep: true
+	} )
+	const swipeOptions = ref( [ {
 		text: '取消',
 		style: {
 			backgroundColor: '#F56C6C'
@@ -112,28 +134,67 @@
 			backgroundColor: '#00f200'
 		}
 	} ] )
-	const swipeClick = ( event, lesson ) => {
+	const updateTeacherOptions = ( newOptions ) => {
+		teacherConfig.value = teacherConfig.value || []
+		const o = teacherConfig.value.find( config => config.subject == newLesson.subject )
+		if ( o ) {
+			o.teachers = newOptions
+		} else {
+			teacherConfig.value.push( {
+				subject: String( newLesson.subject ),
+				teachers: newOptions
+			} )
+		}
+	}
+	const updateClassroomOptions = ( newOptions ) => {
+		classroomOptions.value = newOptions
+	}
+	const updateTeacherSelected = ( value ) => {
+		newLesson.teacher = value
+	}
+	const updateClassroomSelected = ( value ) => {
+		newLesson.classroom = value
+	}
+	const saveTeacherOptions = () => {
+		request( {
+			url: `${process.env.baseUrl}/users/config`,
+			method: 'POST',
+			data: {
+				'teacherOptions': teacherConfig.value
+			}
+		} )
+	}
+	const saveClassroomOptions = () => {
+		request( {
+			url: `${process.env.baseUrl}/users/config`,
+			method: 'POST',
+			data: {
+				'classroomOptions': classroomOptions.value
+			}
+		} )
+	}
+	const swipeClick = async ( event, lesson ) => {
 		const {
 			index
-		} = event
-		if ( index == 0 ) {
-			uni.showModal( {
-				title: '确认取消？',
-				success: ( res ) => {
-					if ( res.confirm ) {
-						lesson.status = 2
-						updateLesson( lesson, '取消成功' )
-					}
-				}
-			} )
-		} else {
-			lesson.status = 1
-			updateLesson( lesson, '完成成功' )
+		} = event;
+		try {
+			if ( index === 0 ) {
+				await uni.showModal( {
+					title: '确认取消？'
+				} );
+				lesson.status = 2;
+				updateLesson( lesson, '取消成功' );
+			} else {
+				lesson.status = 1;
+				updateLesson( lesson, '完成成功' );
+			}
+		} catch ( error ) {
+			console.error( 'Modal error:', error );
+		} finally {
+			swipeRef.value.closeAll();
 		}
-		swipeRef.value.closeAll()
-	}
-	const newLesson = reactive( {} )
-	const rules = reactive( {
+	};
+	const rules = ref( {
 		subject: {
 			rules: [ {
 				required: true,
@@ -171,7 +232,6 @@
 			} ]
 		}
 	} )
-	const popup = ref()
 	const studentSubjectOptions = computed( () => subjectOptions.filter( s => student.subjects.includes( s.value ) ) )
 	const studentTypeOptions = typeOptions
 		.filter( option => {
@@ -184,45 +244,23 @@
 		} )
 		.map( option => {
 			if ( option.value === 1 ) {
-				option.text += ` (剩余：${student.remainHours.hours1v1} 课时)`;
-			} else if ( option.value === 3 ) {
-				option.text += ` (剩余：${student.remainHours.hours1v3} 课时)`;
+				return {
+					value: option.value,
+					text: option.text + `(剩余：${student.remainHours.hours1v1} 课时)`
+				}
+			} else {
+				return {
+					value: option.value,
+					text: option.text + `(剩余：${student.remainHours.hours1v3} 课时)`
+				}
 			}
-			return option;
-		} );
-	const openDialog = () => {
-		popup.value.open()
-	}
-	const statusText = ( status ) => {
-		switch ( status ) {
-		case 0:
-			return '待上课'
-		case 1:
-			return '已上课'
-		case 2:
-			return '已取消'
-		}
-	}
-	const typeText = ( type ) => {
-		if ( type === 1 ) {
-			return '一对一'
-		} else {
-			return '一对三'
-		}
-	}
-	const statusClass = ( status ) => {
-		switch ( status ) {
-		case 0:
-			return 'is-init'
-		case 1:
-			return 'is-approved'
-		case 2:
-			return 'is-draft'
-		}
-	}
-	const closeDialog = () => {
-		popup.value.close()
-	}
+		} )
+	const statusText = status => [ '待上课', '已上课', '已取消' ][ status ] || '';
+	const typeText = type => ( type === 1 ? '一对一' : '一对三' );
+	const statusClass = status => [ 'is-init', 'is-approved', 'is-draft' ][ status ] || '';
+	const popup = ref()
+	const openDialog = () => popup.value.open()
+	const closeDialog = () => popup.value.close()
 	const addLesson = async () => {
 		if ( form.value ) {
 			const valid = await form.value.validate()
@@ -230,7 +268,6 @@
 				uni.requestSubscribeMessage( {
 					tmplIds: [ 'UO10oiJFF9vEhkty7lvT7Q0DY2jXF4QdNn8WqHlVrdI', '0A6-dgr7vyyrZdprmGcFEwxjpNj9vPuvRDVxw5tYI6A' ],
 					success: ( res ) => {
-						console.log( res )
 						if ( res[ 'UO10oiJFF9vEhkty7lvT7Q0DY2jXF4QdNn8WqHlVrdI' ] === 'accept' ||
 							res[ '0A6-dgr7vyyrZdprmGcFEwxjpNj9vPuvRDVxw5tYI6A' ] === 'accept' ) {
 							request( {
@@ -261,34 +298,38 @@
 			}
 		}
 	}
+	const loadDataByDate = ( year, month, date = '' ) => {
+		const formattedMonth = `${year}-${String(month).padStart(2, '0')}`;
+		const formattedDate = date ? `${formattedMonth}-${String(date).padStart(2, '0')}` : formattedMonth;
+		loadData( formattedMonth, formattedDate );
+	};
 	const change = ( params ) => {
 		const {
 			year,
 			month,
 			date
-		} = params
-		loadData( `${year}-${String(month).padStart(2, '0')}`, `${year}-${String(month).padStart(2, '0')}-${date}` )
-	}
+		} = params;
+		loadDataByDate( year, month, date );
+	};
 	const monthSwitch = ( params ) => {
 		const {
 			year,
 			month
-		} = params
-		loadData( `${year}-${String(month).padStart(2, '0')}` )
-	}
+		} = params;
+		loadDataByDate( year, month );
+	};
 	const handleTimeSelection = ( time ) => {
 		newLesson.time = time
 	}
-	const formatDate = ( date ) => {
-		const year = date.getFullYear()
-		const month = String( date.getMonth() + 1 ).padStart( 2, '0' )
-		const day = String( date.getDate() ).padStart( 2, '0' )
-		return `${year}-${month}-${day}`
-	}
-	const formatMonth = ( date ) => {
-		const year = date.getFullYear()
-		const month = String( date.getMonth() + 1 ).padStart( 2, '0' )
-		return `${year}-${month}`
+	const formatDate = ( date, includeDay = true ) => {
+		const year = date.getFullYear();
+		const month = String( date.getMonth() + 1 ).padStart( 2, '0' );
+		const formattedDate = `${year}-${month}`;
+		if ( includeDay ) {
+			const day = String( date.getDate() ).padStart( 2, '0' );
+			return `${formattedDate}-${day}`;
+		}
+		return formattedDate;
 	}
 	const updateLesson = ( lesson, title ) => {
 		request( {
@@ -296,7 +337,7 @@
 			method: 'POST',
 			data: lesson,
 			success: () => {
-				student.deductHours(lesson.type)
+				student.deductHours( lesson.type )
 				uni.showToast( {
 					title: title
 				} )
@@ -321,6 +362,7 @@
 					id: l.lessonId,
 					status: l.status,
 					subject: l.subject,
+					type: l.type,
 					classroom: l.classroom,
 					teacher: l.teacher,
 					time: `${l.startTime}-${l.endTime}`
@@ -330,7 +372,21 @@
 	}
 	onBeforeMount( () => {
 		const date = new Date()
-		loadData( formatMonth( date ), formatDate( date ) )
+		loadData( formatDate( date, false ), formatDate( date ) )
+		request( {
+			url: `${process.env.baseUrl}/users/config`,
+			method: 'GET',
+			success: ( res ) => {
+				if ( res.data.data ) {
+					const {
+						teacherOptions: tOptions,
+						classroomOptions: cOptions
+					} = res.data.data
+					teacherConfig.value = tOptions
+					classroomOptions.value = cOptions
+				}
+			}
+		} )
 	} )
 
 </script>

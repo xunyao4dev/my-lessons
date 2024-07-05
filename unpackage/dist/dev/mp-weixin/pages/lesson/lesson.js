@@ -15,12 +15,12 @@ if (!Array) {
   const _easycom_uni_notice_bar2 = common_vendor.resolveComponent("uni-notice-bar");
   const _easycom_uni_data_select2 = common_vendor.resolveComponent("uni-data-select");
   const _easycom_uni_forms_item2 = common_vendor.resolveComponent("uni-forms-item");
-  const _easycom_uni_easyinput2 = common_vendor.resolveComponent("uni-easyinput");
+  const _easycom_editable_select2 = common_vendor.resolveComponent("editable-select");
   const _easycom_uni_datetime_picker2 = common_vendor.resolveComponent("uni-datetime-picker");
   const _easycom_time_range_picker2 = common_vendor.resolveComponent("time-range-picker");
   const _easycom_uni_forms2 = common_vendor.resolveComponent("uni-forms");
   const _easycom_uni_popup2 = common_vendor.resolveComponent("uni-popup");
-  (_easycom_bruce_calendar2 + _easycom_uni_icons2 + _easycom_uni_swipe_action_item2 + _easycom_uni_swipe_action2 + _easycom_uni_fab2 + _easycom_uni_notice_bar2 + _easycom_uni_data_select2 + _easycom_uni_forms_item2 + _easycom_uni_easyinput2 + _easycom_uni_datetime_picker2 + _easycom_time_range_picker2 + _easycom_uni_forms2 + _easycom_uni_popup2)();
+  (_easycom_bruce_calendar2 + _easycom_uni_icons2 + _easycom_uni_swipe_action_item2 + _easycom_uni_swipe_action2 + _easycom_uni_fab2 + _easycom_uni_notice_bar2 + _easycom_uni_data_select2 + _easycom_uni_forms_item2 + _easycom_editable_select2 + _easycom_uni_datetime_picker2 + _easycom_time_range_picker2 + _easycom_uni_forms2 + _easycom_uni_popup2)();
 }
 const _easycom_bruce_calendar = () => "../../uni_modules/bruce-calendar/components/bruce-calendar/bruce-calendar.js";
 const _easycom_uni_icons = () => "../../uni_modules/uni-icons/components/uni-icons/uni-icons.js";
@@ -30,13 +30,13 @@ const _easycom_uni_fab = () => "../../uni_modules/uni-fab/components/uni-fab/uni
 const _easycom_uni_notice_bar = () => "../../uni_modules/uni-notice-bar/components/uni-notice-bar/uni-notice-bar.js";
 const _easycom_uni_data_select = () => "../../uni_modules/uni-data-select/components/uni-data-select/uni-data-select.js";
 const _easycom_uni_forms_item = () => "../../uni_modules/uni-forms/components/uni-forms-item/uni-forms-item.js";
-const _easycom_uni_easyinput = () => "../../uni_modules/uni-easyinput/components/uni-easyinput/uni-easyinput.js";
+const _easycom_editable_select = () => "../../uni_modules/editable-select/components/editable-select/editable-select.js";
 const _easycom_uni_datetime_picker = () => "../../uni_modules/uni-datetime-picker/components/uni-datetime-picker/uni-datetime-picker.js";
 const _easycom_time_range_picker = () => "../../uni_modules/time-range-picker/components/time-range-picker/time-range-picker.js";
 const _easycom_uni_forms = () => "../../uni_modules/uni-forms/components/uni-forms/uni-forms.js";
 const _easycom_uni_popup = () => "../../uni_modules/uni-popup/components/uni-popup/uni-popup.js";
 if (!Math) {
-  (_easycom_bruce_calendar + _easycom_uni_icons + _easycom_uni_swipe_action_item + _easycom_uni_swipe_action + _easycom_uni_fab + _easycom_uni_notice_bar + _easycom_uni_data_select + _easycom_uni_forms_item + _easycom_uni_easyinput + _easycom_uni_datetime_picker + _easycom_time_range_picker + _easycom_uni_forms + _easycom_uni_popup)();
+  (_easycom_bruce_calendar + _easycom_uni_icons + _easycom_uni_swipe_action_item + _easycom_uni_swipe_action + _easycom_uni_fab + _easycom_uni_notice_bar + _easycom_uni_data_select + _easycom_uni_forms_item + _easycom_editable_select + _easycom_uni_datetime_picker + _easycom_time_range_picker + _easycom_uni_forms + _easycom_uni_popup)();
 }
 const _sfc_main = {
   __name: "lesson",
@@ -48,7 +48,26 @@ const _sfc_main = {
     const student = store_student.useStudentStore();
     const selected = common_vendor.ref([]);
     const lessons = common_vendor.ref([]);
-    const swipeOptions = common_vendor.reactive([{
+    const newLesson = common_vendor.reactive({});
+    const teacherConfig = common_vendor.ref([]);
+    const teacherOptions = common_vendor.ref([]);
+    const classroomOptions = common_vendor.ref([]);
+    common_vendor.watch([() => newLesson.subject, teacherConfig], ([newSubject, newConfig], [oldSubject, oldConfig]) => {
+      var _a;
+      const selectedConfig = (_a = teacherConfig.value) == null ? void 0 : _a.find((config) => config.subject == newSubject);
+      if (selectedConfig) {
+        teacherOptions.value = selectedConfig.teachers;
+      } else {
+        teacherOptions.value = [];
+      }
+      if (newSubject !== oldSubject) {
+        newLesson.teacher = "";
+      }
+    }, {
+      immediate: true,
+      deep: true
+    });
+    const swipeOptions = common_vendor.ref([{
       text: "取消",
       style: {
         backgroundColor: "#F56C6C"
@@ -59,28 +78,67 @@ const _sfc_main = {
         backgroundColor: "#00f200"
       }
     }]);
-    const swipeClick = (event, lesson2) => {
+    const updateTeacherOptions = (newOptions) => {
+      teacherConfig.value = teacherConfig.value || [];
+      const o = teacherConfig.value.find((config) => config.subject == newLesson.subject);
+      if (o) {
+        o.teachers = newOptions;
+      } else {
+        teacherConfig.value.push({
+          subject: String(newLesson.subject),
+          teachers: newOptions
+        });
+      }
+    };
+    const updateClassroomOptions = (newOptions) => {
+      classroomOptions.value = newOptions;
+    };
+    const updateTeacherSelected = (value) => {
+      newLesson.teacher = value;
+    };
+    const updateClassroomSelected = (value) => {
+      newLesson.classroom = value;
+    };
+    const saveTeacherOptions = () => {
+      utils_request.request({
+        url: `${define_process_env_default.baseUrl}/users/config`,
+        method: "POST",
+        data: {
+          "teacherOptions": teacherConfig.value
+        }
+      });
+    };
+    const saveClassroomOptions = () => {
+      utils_request.request({
+        url: `${define_process_env_default.baseUrl}/users/config`,
+        method: "POST",
+        data: {
+          "classroomOptions": classroomOptions.value
+        }
+      });
+    };
+    const swipeClick = async (event, lesson2) => {
       const {
         index
       } = event;
-      if (index == 0) {
-        common_vendor.index.showModal({
-          title: "确认取消？",
-          success: (res) => {
-            if (res.confirm) {
-              lesson2.status = 2;
-              updateLesson(lesson2, "取消成功");
-            }
-          }
-        });
-      } else {
-        lesson2.status = 1;
-        updateLesson(lesson2, "完成成功");
+      try {
+        if (index === 0) {
+          await common_vendor.index.showModal({
+            title: "确认取消？"
+          });
+          lesson2.status = 2;
+          updateLesson(lesson2, "取消成功");
+        } else {
+          lesson2.status = 1;
+          updateLesson(lesson2, "完成成功");
+        }
+      } catch (error) {
+        console.error("Modal error:", error);
+      } finally {
+        swipeRef.value.closeAll();
       }
-      swipeRef.value.closeAll();
     };
-    const newLesson = common_vendor.reactive({});
-    const rules = common_vendor.reactive({
+    const rules = common_vendor.ref({
       subject: {
         rules: [{
           required: true,
@@ -118,7 +176,6 @@ const _sfc_main = {
         }]
       }
     });
-    const popup = common_vendor.ref();
     const studentSubjectOptions = common_vendor.computed(() => utils_constant.subjectOptions.filter((s) => student.subjects.includes(s.value)));
     const studentTypeOptions = utils_constant.typeOptions.filter((option) => {
       if (option.value === 1) {
@@ -129,45 +186,23 @@ const _sfc_main = {
       return false;
     }).map((option) => {
       if (option.value === 1) {
-        option.text += ` (剩余：${student.remainHours.hours1v1} 课时)`;
-      } else if (option.value === 3) {
-        option.text += ` (剩余：${student.remainHours.hours1v3} 课时)`;
-      }
-      return option;
-    });
-    const openDialog = () => {
-      popup.value.open();
-    };
-    const statusText = (status) => {
-      switch (status) {
-        case 0:
-          return "待上课";
-        case 1:
-          return "已上课";
-        case 2:
-          return "已取消";
-      }
-    };
-    const typeText = (type) => {
-      if (type === 1) {
-        return "一对一";
+        return {
+          value: option.value,
+          text: option.text + `(剩余：${student.remainHours.hours1v1} 课时)`
+        };
       } else {
-        return "一对三";
+        return {
+          value: option.value,
+          text: option.text + `(剩余：${student.remainHours.hours1v3} 课时)`
+        };
       }
-    };
-    const statusClass = (status) => {
-      switch (status) {
-        case 0:
-          return "is-init";
-        case 1:
-          return "is-approved";
-        case 2:
-          return "is-draft";
-      }
-    };
-    const closeDialog = () => {
-      popup.value.close();
-    };
+    });
+    const statusText = (status) => ["待上课", "已上课", "已取消"][status] || "";
+    const typeText = (type) => type === 1 ? "一对一" : "一对三";
+    const statusClass = (status) => ["is-init", "is-approved", "is-draft"][status] || "";
+    const popup = common_vendor.ref();
+    const openDialog = () => popup.value.open();
+    const closeDialog = () => popup.value.close();
     const addLesson = async () => {
       if (form.value) {
         const valid = await form.value.validate();
@@ -175,7 +210,6 @@ const _sfc_main = {
           common_vendor.index.requestSubscribeMessage({
             tmplIds: ["UO10oiJFF9vEhkty7lvT7Q0DY2jXF4QdNn8WqHlVrdI", "0A6-dgr7vyyrZdprmGcFEwxjpNj9vPuvRDVxw5tYI6A"],
             success: (res) => {
-              console.log(res);
               if (res["UO10oiJFF9vEhkty7lvT7Q0DY2jXF4QdNn8WqHlVrdI"] === "accept" || res["0A6-dgr7vyyrZdprmGcFEwxjpNj9vPuvRDVxw5tYI6A"] === "accept") {
                 utils_request.request({
                   url: `${define_process_env_default.baseUrl}/students/${student.id}/lessons`,
@@ -204,34 +238,38 @@ const _sfc_main = {
         }
       }
     };
+    const loadDataByDate = (year, month, date = "") => {
+      const formattedMonth = `${year}-${String(month).padStart(2, "0")}`;
+      const formattedDate = date ? `${formattedMonth}-${String(date).padStart(2, "0")}` : formattedMonth;
+      loadData(formattedMonth, formattedDate);
+    };
     const change = (params) => {
       const {
         year,
         month,
         date
       } = params;
-      loadData(`${year}-${String(month).padStart(2, "0")}`, `${year}-${String(month).padStart(2, "0")}-${date}`);
+      loadDataByDate(year, month, date);
     };
     const monthSwitch = (params) => {
       const {
         year,
         month
       } = params;
-      loadData(`${year}-${String(month).padStart(2, "0")}`);
+      loadDataByDate(year, month);
     };
     const handleTimeSelection = (time) => {
       newLesson.time = time;
     };
-    const formatDate = (date) => {
+    const formatDate = (date, includeDay = true) => {
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-      return `${year}-${month}-${day}`;
-    };
-    const formatMonth = (date) => {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      return `${year}-${month}`;
+      const formattedDate = `${year}-${month}`;
+      if (includeDay) {
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${formattedDate}-${day}`;
+      }
+      return formattedDate;
     };
     const updateLesson = (lesson2, title) => {
       utils_request.request({
@@ -264,6 +302,7 @@ const _sfc_main = {
             id: l.lessonId,
             status: l.status,
             subject: l.subject,
+            type: l.type,
             classroom: l.classroom,
             teacher: l.teacher,
             time: `${l.startTime}-${l.endTime}`
@@ -273,10 +312,24 @@ const _sfc_main = {
     };
     common_vendor.onBeforeMount(() => {
       const date = /* @__PURE__ */ new Date();
-      loadData(formatMonth(date), formatDate(date));
+      loadData(formatDate(date, false), formatDate(date));
+      utils_request.request({
+        url: `${define_process_env_default.baseUrl}/users/config`,
+        method: "GET",
+        success: (res) => {
+          if (res.data.data) {
+            const {
+              teacherOptions: tOptions,
+              classroomOptions: cOptions
+            } = res.data.data;
+            teacherConfig.value = tOptions;
+            classroomOptions.value = cOptions;
+          }
+        }
+      });
     });
     return (_ctx, _cache) => {
-      return {
+      return common_vendor.e({
         a: common_vendor.sr(calRef, "d2ae5ec9-0", {
           "k": "calRef"
         }),
@@ -307,7 +360,7 @@ const _sfc_main = {
             l: common_vendor.o(($event) => swipeClick($event, lesson2), lesson2.id),
             m: "d2ae5ec9-2-" + i0 + ",d2ae5ec9-1",
             n: common_vendor.p({
-              ["right-options"]: swipeOptions,
+              ["right-options"]: swipeOptions.value,
               disabled: lesson2.status !== 0
             })
           };
@@ -335,91 +388,103 @@ const _sfc_main = {
           color: "#888",
           text: "将为【" + common_vendor.unref(student).name + "】添加课程"
         }),
-        l: common_vendor.o(($event) => newLesson.subject = $event),
-        m: common_vendor.p({
+        l: common_vendor.o(() => {
+        }),
+        m: common_vendor.o(($event) => newLesson.subject = $event),
+        n: common_vendor.p({
           localdata: studentSubjectOptions.value,
           placeholder: "请选择科目",
           modelValue: newLesson.subject
         }),
-        n: common_vendor.p({
+        o: common_vendor.p({
           label: "科目",
           ["label-width"]: "70",
           required: true,
           name: "subject"
         }),
-        o: common_vendor.o(($event) => newLesson.type = $event),
-        p: common_vendor.p({
+        p: common_vendor.o(($event) => newLesson.type = $event),
+        q: common_vendor.p({
           localdata: common_vendor.unref(studentTypeOptions),
           placeholder: "请选择班型",
           modelValue: newLesson.type
         }),
-        q: common_vendor.p({
+        r: common_vendor.p({
           label: "班型",
           ["label-width"]: "70",
           required: true,
           name: "type"
         }),
-        r: common_vendor.o(($event) => newLesson.teacher = $event),
-        s: common_vendor.p({
-          placeholder: "请输入教师",
-          modelValue: newLesson.teacher
+        s: common_vendor.unref(utils_utils.formatSubject)(newLesson.subject)
+      }, common_vendor.unref(utils_utils.formatSubject)(newLesson.subject) ? {
+        t: common_vendor.o(updateTeacherSelected),
+        v: common_vendor.o(updateTeacherOptions),
+        w: common_vendor.p({
+          title: common_vendor.unref(utils_utils.formatSubject)(newLesson.subject),
+          options: teacherOptions.value,
+          placeholder: "请选择老师",
+          selected: newLesson.teacher,
+          saveOptions: saveTeacherOptions
         }),
-        t: common_vendor.p({
+        x: common_vendor.p({
           label: "教师",
           ["label-width"]: "70",
           required: true,
           name: "teacher"
+        })
+      } : {}, {
+        y: common_vendor.o(updateClassroomSelected),
+        z: common_vendor.o(updateClassroomOptions),
+        A: common_vendor.p({
+          options: classroomOptions.value,
+          placeholder: "请选择教室",
+          selected: newLesson.classroom,
+          saveOptions: saveClassroomOptions
         }),
-        v: common_vendor.o(($event) => newLesson.classroom = $event),
-        w: common_vendor.p({
-          placeholder: "请输入教室",
-          modelValue: newLesson.classroom
-        }),
-        x: common_vendor.p({
+        B: common_vendor.p({
           label: "教室",
           ["label-width"]: "70",
           required: true,
           name: "classroom"
         }),
-        y: common_vendor.o(($event) => newLesson.date = $event),
-        z: common_vendor.p({
+        C: common_vendor.o(($event) => newLesson.date = $event),
+        D: common_vendor.p({
           type: "date",
           placeholder: "请选择日期",
           modelValue: newLesson.date
         }),
-        A: common_vendor.p({
+        E: common_vendor.p({
           label: "日期",
           ["label-width"]: "70",
           required: true,
           name: "date"
         }),
-        B: common_vendor.o(handleTimeSelection),
-        C: common_vendor.o(($event) => newLesson.time = $event),
-        D: common_vendor.p({
+        F: common_vendor.o(handleTimeSelection),
+        G: common_vendor.o(($event) => newLesson.time = $event),
+        H: common_vendor.p({
           modelValue: newLesson.time
         }),
-        E: common_vendor.p({
+        I: common_vendor.p({
           label: "时间",
           ["label-width"]: "70",
           required: true,
           name: "time"
         }),
-        F: common_vendor.sr(form, "d2ae5ec9-8,d2ae5ec9-6", {
+        J: common_vendor.sr(form, "d2ae5ec9-8,d2ae5ec9-6", {
           "k": "form"
         }),
-        G: common_vendor.p({
-          rules,
+        K: common_vendor.p({
+          rules: rules.value,
           model: newLesson
         }),
-        H: common_vendor.o(closeDialog),
-        I: common_vendor.o(addLesson),
-        J: common_vendor.sr(popup, "d2ae5ec9-6", {
+        L: common_vendor.o(closeDialog),
+        M: common_vendor.o(addLesson),
+        N: common_vendor.sr(popup, "d2ae5ec9-6", {
           "k": "popup"
         }),
-        K: common_vendor.p({
+        O: common_vendor.p({
           type: "center"
         })
-      };
+      });
     };
   }
 };

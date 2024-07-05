@@ -1,0 +1,139 @@
+
+.imitate-input-wrapper.data-v-8ee3c4bc {
+		height: 35px;
+		border: 1px solid #e5e5e5;
+		display: flex;
+		align-items: center;
+		background-color: #fff;
+}
+.imitate-input-placeholder.data-v-8ee3c4bc {
+		color: #888;
+		font-weight: 400;
+		padding-left: 10px;
+}
+.imitate-input-wrapper text.data-v-8ee3c4bc {
+		flex: 1;
+}
+.imitate-input-wrapper input.data-v-8ee3c4bc {
+		flex: 1;
+		border: none;
+		outline: none;
+		background-color: #fff;
+		margin-left: 10px;
+		color: #888;
+}
+.picker-modal.data-v-8ee3c4bc {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		background-color: #fff;
+		border-top-left-radius: 10px;
+		border-top-right-radius: 10px;
+		box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
+		padding: 10px 20px 20px 10px;
+		display: flex;
+		flex-direction: column;
+		z-index: 100000;
+}
+.picker-header.data-v-8ee3c4bc {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 10px;
+}
+.cancel-btn.data-v-8ee3c4bc,
+	.confirm-btn.data-v-8ee3c4bc {
+		padding: 6px 12px;
+		background-color: #007aff;
+		color: white;
+		border-radius: 5px;
+		font-size: 12px;
+}
+.title.data-v-8ee3c4bc {
+		font-weight: 600;
+		color: #888;
+}
+.cancel-btn.data-v-8ee3c4bc {
+		background-color: #ccc;
+}
+.picker-body.data-v-8ee3c4bc {
+		flex: 1;
+		-webkit-overflow-scrolling: touch;
+		overflow-y: auto;
+		max-height: 50vh;
+		min-height: 15vh;
+}
+.picker-item.data-v-8ee3c4bc {
+		padding: 10px;
+		text-align: center;
+		position: relative;
+}
+.picker-item.editing-item.data-v-8ee3c4bc {
+		padding: 2px;
+}
+.item-text.data-v-8ee3c4bc {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		color: #666;
+		position: relative;
+}
+.check-icon.data-v-8ee3c4bc {
+		position: absolute;
+		right: 10px;
+		top: 50%;
+		transform: translateY(-50%);
+}
+.edit-icon.data-v-8ee3c4bc,
+	.save-icon.data-v-8ee3c4bc {
+		width: 20px;
+		height: 20px;
+		margin-left: 5px;
+}
+.selected-indicator.data-v-8ee3c4bc {
+		position: absolute;
+		top: 50%;
+		right: 10px;
+		transform: translateY(-50%);
+}
+.edit-item.data-v-8ee3c4bc {
+		display: flex;
+		align-items: center;
+		font-size: 14px;
+		color: #666;
+}
+.edit-input.data-v-8ee3c4bc {
+		flex: 1;
+		border: none;
+		outline: none;
+}
+.empty-tips.data-v-8ee3c4bc {
+		font-size: 12px;
+		color: #888;
+		text-align: center;
+		margin: 10px 0 20px 0;
+}
+.input-wrapper.data-v-8ee3c4bc {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-top: 10px;
+		border: 1px solid #ccc;
+		border-radius: 5px;
+		font-size: 12px;
+}
+.custom-input.data-v-8ee3c4bc {
+		flex: 1;
+		padding: 8px;
+		border: none;
+		outline: none;
+}
+.confirm-icon.data-v-8ee3c4bc {
+		padding: 5px 10px;
+		background-color: #007aff;
+		border-radius: 5px;
+		margin-right: 5px;
+}
+
